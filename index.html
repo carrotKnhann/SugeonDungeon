@@ -1,0 +1,2063 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sugeon Dungeon - Điển Tịch Hầm Ngục Tối</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Playfair Display cho tiêu đề sử thi, Inter cho nội dung - Hỗ trợ đầy đủ tiếng Việt 100%) -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,800;0,900;1,600&family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --dungeon-bg: #03050d;
+            --dungeon-accent: #f59e0b;
+            --dungeon-glow: rgba(99, 102, 241, 0.12);
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dungeon-bg);
+        }
+        .fantasy-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+        }
+        /* Ambient background */
+        .page-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+        .page-bg-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+            animation: orb-float 18s ease-in-out infinite;
+        }
+        .page-bg-orb-1 { width: 420px; height: 420px; background: #4f46e5; top: -8%; left: -5%; }
+        .page-bg-orb-2 { width: 360px; height: 360px; background: #be123c; bottom: 10%; right: -6%; animation-delay: -6s; }
+        .page-bg-orb-3 { width: 280px; height: 280px; background: #0891b2; top: 45%; left: 40%; animation-delay: -12s; opacity: 0.2; }
+        .page-bg-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(99, 102, 241, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.04) 1px, transparent 1px);
+            background-size: 48px 48px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, black 20%, transparent 75%);
+        }
+        @keyframes orb-float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(24px, -16px) scale(1.05); }
+            66% { transform: translate(-16px, 12px) scale(0.95); }
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        @keyframes fade-up {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up { animation: fade-up 0.45s ease-out both; }
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #050818; }
+        ::-webkit-scrollbar-thumb { background: linear-gradient(180deg, #312e81, #1e1b4b); border-radius: 4px; border: 2px solid #050818; }
+        ::-webkit-scrollbar-thumb:hover { background: #4338ca; }
+        .neon-shadow-blue { box-shadow: 0 0 24px rgba(56, 189, 248, 0.12), inset 0 1px 0 rgba(255,255,255,0.04); }
+        .neon-shadow-red { box-shadow: 0 0 24px rgba(239, 68, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.04); }
+        .text-glow-blue { text-shadow: 0 0 12px rgba(56, 189, 248, 0.45); }
+        .text-glow-red { text-shadow: 0 0 12px rgba(239, 68, 68, 0.45); }
+        .text-glow-gold { text-shadow: 0 0 14px rgba(245, 158, 11, 0.55); }
+        .glass-panel {
+            background: linear-gradient(135deg, rgba(12, 18, 42, 0.82), rgba(8, 12, 28, 0.65));
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 4px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+        }
+        .glass-header {
+            background: linear-gradient(180deg, rgba(8, 12, 28, 0.95) 0%, rgba(8, 12, 28, 0.85) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+        }
+        .stat-pill {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.5), rgba(15, 23, 42, 0.8));
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+        }
+        .nav-tab-active {
+            background: linear-gradient(135deg, rgba(67, 56, 202, 0.9), rgba(49, 46, 129, 0.95));
+            box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        .mob-card {
+            background: linear-gradient(165deg, rgba(15, 23, 42, 0.75) 0%, rgba(8, 12, 28, 0.9) 100%);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s, border-color 0.3s;
+        }
+        .mob-card:hover {
+            transform: translateY(-4px);
+        }
+        .mob-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .mob-card:hover::before { opacity: 1; }
+        .hp-bar-fill {
+            background-size: 200% 100%;
+            box-shadow: 0 0 12px currentColor;
+        }
+        .hp-bar-fill.shimmer {
+            background-image: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.25) 50%, transparent 100%);
+            animation: shimmer 3s linear infinite;
+        }
+        .hp-bar-fill-red {
+            background: linear-gradient(90deg, #b91c1c, #f87171, #fecaca);
+            box-shadow: 0 0 10px rgba(248, 113, 113, 0.38);
+            color: #f87171;
+        }
+        .score-bar-fill {
+            background: linear-gradient(90deg, #78350f, #f59e0b, #fde68a);
+            box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+            color: #f59e0b;
+        }
+        .defense-card {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(8, 12, 28, 0.75));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+        .defense-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 0.35rem 0.65rem;
+            border-radius: 0.65rem;
+            border: 1px solid transparent;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .defense-chip:hover { transform: translateY(-1px); }
+        .defense-chip-immune {
+            background: linear-gradient(135deg, rgba(6, 78, 59, 0.5), rgba(4, 47, 46, 0.6));
+            border-color: rgba(52, 211, 153, 0.35);
+            color: #6ee7b7;
+        }
+        .defense-chip-resist {
+            background: linear-gradient(135deg, rgba(67, 56, 202, 0.25), rgba(30, 27, 75, 0.5));
+            border-color: rgba(129, 140, 248, 0.35);
+            color: #c7d2fe;
+        }
+        .defense-chip-gear {
+            background: linear-gradient(135deg, rgba(120, 53, 15, 0.35), rgba(69, 26, 3, 0.45));
+            border-color: rgba(251, 191, 36, 0.3);
+            color: #fde68a;
+        }
+        .resist-meter {
+            height: 4px;
+            border-radius: 999px;
+            background: rgba(15, 23, 42, 0.9);
+            overflow: hidden;
+        }
+        .resist-meter-fill {
+            height: 100%;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #4338ca, #818cf8);
+            transition: width 0.6s ease;
+        }
+        .detail-image-square {
+            aspect-ratio: 1 / 1;
+            max-width: 320px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .mob-name-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 0.65rem;
+            border: 1px solid;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 4px 12px rgba(0, 0, 0, 0.25);
+            flex-shrink: 0;
+        }
+        .mob-name-icon-sm { width: 2rem; height: 2rem; font-size: 0.8rem; }
+        .mob-name-icon-md { width: 2.5rem; height: 2.5rem; font-size: 1rem; }
+        .mob-name-icon-lg { width: 3rem; height: 3rem; font-size: 1.15rem; border-radius: 0.85rem; }
+        .mob-name-title {
+            font-family: 'Playfair Display', serif;
+            font-weight: 900;
+            letter-spacing: 0.03em;
+            line-height: 1.2;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #d97706, #b45309);
+            box-shadow: 0 4px 14px rgba(217, 119, 6, 0.35);
+            transition: all 0.25s;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+            transform: translateY(-1px);
+        }
+        .compare-row { transition: background 0.2s, box-shadow 0.2s; }
+        .compare-row:hover {
+            background: linear-gradient(90deg, rgba(49, 46, 129, 0.15), rgba(30, 27, 75, 0.08));
+            box-shadow: inset 3px 0 0 rgba(99, 102, 241, 0.6);
+        }
+        .sim-pick.selected { box-shadow: 0 0 0 1px currentColor, 0 8px 24px rgba(0,0,0,0.3); }
+        .threat-meter-track {
+            background: linear-gradient(180deg, #0f172a, #020617);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+        }
+        .modal-backdrop {
+            background: radial-gradient(ellipse at center, rgba(30, 27, 75, 0.4) 0%, rgba(0, 0, 0, 0.88) 70%);
+        }
+        .modal-shell {
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.2), inset 0 1px 0 rgba(255,255,255,0.06);
+        }
+        .hero-banner {
+            background: linear-gradient(135deg, rgba(49, 46, 129, 0.25) 0%, rgba(15, 23, 42, 0.6) 50%, rgba(136, 19, 55, 0.15) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.05);
+        }
+        /* Skill card system */
+        .skill-card {
+            position: relative;
+            border-radius: 1rem;
+            overflow: hidden;
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+        .skill-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+        }
+        .skill-card-accent {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+        .skill-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.02em;
+            padding: 0.2rem 0.5rem;
+            border-radius: 0.5rem;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .skill-effect-text {
+            font-size: 0.8125rem;
+            line-height: 1.65;
+            color: #cbd5e1;
+        }
+        .skill-effect-text strong.hl-dmg {
+            color: #fb7185;
+            font-weight: 700;
+        }
+        .skill-effect-text strong.hl-heal {
+            color: #34d399;
+            font-weight: 700;
+        }
+        .skill-effect-text strong.hl-debuff {
+            color: #c084fc;
+            font-weight: 700;
+        }
+        .skill-effect-text strong.hl-range {
+            color: #67e8f9;
+            font-weight: 600;
+        }
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="text-slate-200 min-h-screen relative" x-data="dungeonApp()">
+
+    <!-- Ambient background -->
+    <div class="page-bg" aria-hidden="true">
+        <div class="page-bg-grid"></div>
+        <div class="page-bg-orb page-bg-orb-1"></div>
+        <div class="page-bg-orb page-bg-orb-2"></div>
+        <div class="page-bg-orb page-bg-orb-3"></div>
+    </div>
+
+    <div class="relative z-10 min-h-screen flex flex-col">
+
+    <!-- TOP HEADER -->
+    <header class="glass-header border-b border-indigo-950/60 sticky top-0 z-40 px-4 py-4 md:px-8">
+        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo Section -->
+            <div class="flex items-center gap-4">
+                <div class="relative group">
+                    <div class="absolute -inset-1 bg-gradient-to-r from-cyan-500 via-amber-500 to-rose-600 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500"></div>
+                    <div class="relative p-3.5 bg-gradient-to-br from-slate-900 to-slate-950 border border-indigo-800/50 rounded-2xl text-amber-400 shadow-xl">
+                        <i class="fa-solid fa-dungeon text-3xl"></i>
+                    </div>
+                </div>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-rose-400 to-violet-400 fantasy-title">SUGEON DUNGEON</h1>
+                    <p class="text-[11px] text-indigo-300/90 tracking-[0.2em] font-semibold uppercase mt-1">Điển Tịch Hầm Ngục · Linh Gác & Tinh Nhuệ</p>
+                </div>
+            </div>
+
+            <!-- Global Display Controls & Stats -->
+            <div class="flex flex-wrap items-center justify-center gap-2.5 text-xs">
+                <button @click="showImages = !showImages" 
+                        :class="showImages ? 'bg-indigo-600/90 border-indigo-400/60 text-white shadow-lg shadow-indigo-600/25' : 'stat-pill text-slate-400 hover:text-slate-200 hover:border-indigo-700'"
+                        class="px-4 py-2.5 rounded-xl border font-bold transition-all flex items-center gap-2">
+                    <i :class="showImages ? 'fa-solid fa-eye' : 'fa-solid fa-eye-slash'"></i>
+                    <span class="hidden sm:inline" x-text="showImages ? 'Ẩn hình ảnh' : 'Hiện hình ảnh'"></span>
+                </button>
+                <div class="stat-pill px-3.5 py-2 rounded-xl flex items-center gap-2">
+                    <i class="fa-solid fa-dragon text-amber-500/80"></i>
+                    <span class="text-indigo-300">Quái:</span>
+                    <strong class="text-amber-300 text-sm font-mono" x-text="mobs.length"></strong>
+                </div>
+                <div class="stat-pill px-3.5 py-2 rounded-xl flex items-center gap-2 border-cyan-900/40">
+                    <span class="w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_8px_#22d3ee]"></span>
+                    <span class="text-cyan-400">T1</span>
+                    <strong class="text-cyan-200 text-sm font-mono" x-text="mobs.filter(m => m.tier === 1).length"></strong>
+                </div>
+                <div class="stat-pill px-3.5 py-2 rounded-xl flex items-center gap-2 border-rose-900/40">
+                    <span class="w-2 h-2 rounded-full bg-rose-500 shadow-[0_0_8px_#f43f5e]"></span>
+                    <span class="text-rose-400">T2</span>
+                    <strong class="text-rose-200 text-sm font-mono" x-text="mobs.filter(m => m.tier === 2).length"></strong>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6 md:py-8 md:px-8 flex-grow w-full">
+
+        <!-- Hero banner -->
+        <div class="hero-banner rounded-2xl px-5 py-4 md:px-6 md:py-5 mb-6 flex flex-col md:flex-row md:items-center justify-between gap-3 animate-fade-up">
+            <div>
+                <p class="text-sm md:text-base text-slate-200 font-medium leading-relaxed">
+                    Tra cứu <span class="text-amber-400 font-bold" x-text="mobs.length"></span> quái dungeon — chỉ số thực chiến, skill và mô phỏng đội hình.
+                </p>
+                <p class="text-[11px] text-slate-500 mt-1">Nguồn: MythicMobs YAML · Cập nhật balance 2026-06</p>
+            </div>
+            <div class="flex gap-2 text-[10px] font-bold uppercase tracking-wider">
+                <span class="px-2.5 py-1 rounded-lg bg-cyan-950/60 text-cyan-400 border border-cyan-900/50">Linh Gác</span>
+                <span class="px-2.5 py-1 rounded-lg bg-rose-950/60 text-rose-400 border border-rose-900/50">Tinh Nhuệ</span>
+            </div>
+        </div>
+
+        <!-- NAV TABS -->
+        <div class="glass-panel p-1.5 rounded-2xl border border-indigo-900/40 mb-8 max-w-3xl mx-auto shadow-2xl">
+            <div class="grid grid-cols-3 gap-1">
+            <button @click="activeTab = 'codex'" 
+                    :class="activeTab === 'codex' ? 'nav-tab-active text-amber-300' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'"
+                    class="py-3.5 px-2 rounded-xl text-xs md:text-sm transition-all flex items-center justify-center gap-2 font-semibold">
+                <i class="fa-solid fa-scroll text-sm"></i> <span class="hidden sm:inline">Thư Viện</span><span class="sm:hidden">Codex</span>
+            </button>
+            <button @click="activeTab = 'compare'" 
+                    :class="activeTab === 'compare' ? 'nav-tab-active text-amber-300' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'"
+                    class="py-3.5 px-2 rounded-xl text-xs md:text-sm transition-all flex items-center justify-center gap-2 font-semibold">
+                <i class="fa-solid fa-table-columns text-sm"></i> So Sánh
+            </button>
+            <button @click="activeTab = 'simulator'" 
+                    :class="activeTab === 'simulator' ? 'nav-tab-active text-amber-300' : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/50'"
+                    class="py-3.5 px-2 rounded-xl text-xs md:text-sm transition-all flex items-center justify-center gap-2 font-semibold">
+                <i class="fa-solid fa-chess-board text-sm"></i> Giả Lập
+            </button>
+            </div>
+        </div>
+
+        <!-- 1. CODEX TAB -->
+        <div x-show="activeTab === 'codex'" class="space-y-6" x-transition>
+            
+            <!-- Filters Control Panel -->
+            <div class="glass-panel border border-indigo-900/40 p-5 md:p-6 rounded-2xl flex flex-col lg:flex-row gap-5 items-center justify-between">
+                
+                <!-- Level Division Switcher -->
+                <div class="flex items-center gap-1.5 p-1.5 bg-slate-950 rounded-xl border border-indigo-950/60 w-full lg:w-auto">
+                    <button @click="selectedTier = 'all'" 
+                            :class="selectedTier === 'all' ? 'bg-indigo-600 text-white font-semibold shadow-lg shadow-indigo-600/20' : 'text-slate-400 hover:text-white'"
+                            class="flex-1 lg:flex-none px-4 py-2.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-layer-group"></i> Tất cả Cấp
+                    </button>
+                    <button @click="selectedTier = 1" 
+                            :class="selectedTier === 1 ? 'bg-sky-500 text-slate-950 font-bold shadow-lg shadow-sky-500/20' : 'text-slate-400 hover:text-sky-400'"
+                            class="flex-1 lg:flex-none px-4 py-2.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-shield-halved"></i> Cấp 1 (Linh Gác)
+                    </button>
+                    <button @click="selectedTier = 2" 
+                            :class="selectedTier === 2 ? 'bg-rose-600 text-white font-bold shadow-lg shadow-rose-600/20' : 'text-slate-400 hover:text-rose-400'"
+                            class="flex-1 lg:flex-none px-4 py-2.5 rounded-lg text-xs transition-all flex items-center justify-center gap-1.5 whitespace-nowrap">
+                        <i class="fa-solid fa-skull-crossbones"></i> Cấp 2 (Tinh Nhuệ)
+                    </button>
+                </div>
+
+                <!-- Input search & threat filter tags -->
+                <div class="flex flex-col md:flex-row gap-4 w-full lg:w-auto items-center">
+                    <!-- Search Input -->
+                    <div class="relative w-full md:w-72">
+                        <i class="fa-solid fa-skull absolute left-3.5 top-1/2 -translate-y-1/2 text-indigo-500/80 text-sm"></i>
+                        <input type="text" x-model="searchQuery" placeholder="Tìm tên quái, vai trò, ID..." 
+                               class="w-full pl-10 pr-4 py-2.5 bg-slate-950/90 border border-indigo-950 rounded-xl text-sm text-slate-200 placeholder-indigo-400/40 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 shadow-inner">
+                    </div>
+
+                    <!-- Threat Badges Filters -->
+                    <div class="flex flex-wrap gap-1.5 w-full md:w-auto justify-center md:justify-end">
+                        <button @click="selectedThreat = 'All'" 
+                                :class="selectedThreat === 'All' ? 'bg-indigo-900/60 text-indigo-200 border-indigo-700/60' : 'bg-slate-950/50 text-slate-400 border-indigo-950 hover:border-slate-800'"
+                                class="px-3 py-2 rounded-xl border text-[11px] font-semibold transition-all">Tất cả Độ khó</button>
+                        <button @click="selectedThreat = 'Cực khó'" 
+                                :class="selectedThreat === 'Cực khó' ? 'bg-red-950/80 text-red-400 border-red-800/80 text-glow-red' : 'bg-slate-950/50 text-slate-400 border-indigo-950 hover:border-slate-800'"
+                                class="px-3 py-2 rounded-xl border text-[11px] font-semibold transition-all">Cực khó</button>
+                        <button @click="selectedThreat = 'Rất khó'" 
+                                :class="selectedThreat === 'Rất khó' ? 'bg-orange-950/80 text-orange-400 border-orange-850' : 'bg-slate-950/50 text-slate-400 border-indigo-950 hover:border-slate-800'"
+                                class="px-3 py-2 rounded-xl border text-[11px] font-semibold transition-all">Rất khó</button>
+                        <button @click="selectedThreat = 'Cao'" 
+                                :class="selectedThreat === 'Cao' ? 'bg-amber-950/80 text-amber-400 border-amber-850' : 'bg-slate-950/50 text-slate-400 border-indigo-950 hover:border-slate-800'"
+                                class="px-3 py-2 rounded-xl border text-[11px] font-semibold transition-all">Cao</button>
+                        <button @click="selectedThreat = 'Trung bình'" 
+                                :class="selectedThreat === 'Trung bình' ? 'bg-emerald-950/80 text-emerald-400 border-emerald-850' : 'bg-slate-950/50 text-slate-400 border-indigo-950 hover:border-slate-800'"
+                                class="px-3 py-2 rounded-xl border text-[11px] font-semibold transition-all">Vừa/Yếu</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mob Cards Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-6">
+                <template x-for="mob in filteredMobs" :key="mob.id">
+                    <article :class="mob.tier === 1 ? 'border-cyan-900/40 hover:border-cyan-500/50 neon-shadow-blue' : 'border-rose-900/40 hover:border-rose-500/50 neon-shadow-red'"
+                         class="mob-card border rounded-2xl overflow-hidden flex flex-col justify-between group relative cursor-default">
+                        
+                        <!-- Tier ribbon -->
+                        <div class="absolute top-0 left-0 z-10 w-1 h-full rounded-l-2xl"
+                             :class="mob.tier === 1 ? 'bg-gradient-to-b from-cyan-400 to-cyan-700' : 'bg-gradient-to-b from-rose-400 to-rose-700'"></div>
+
+                        <!-- Dynamic Image Header -->
+                        <div x-show="showImages" class="relative h-48 w-full bg-slate-900 overflow-hidden border-b border-indigo-950/60">
+                            <img :src="mob.image" alt="" 
+                                 class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out opacity-85 group-hover:opacity-100"
+                                 onerror="this.src='https://placehold.co/600x400/0f172a/6366f1?text=Sugeon+Dungeon'">
+                            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
+                            <div class="absolute bottom-3 left-3 flex gap-1.5">
+                                <span :class="mob.tier === 1 ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40' : 'bg-rose-500/20 text-rose-300 border-rose-500/40'" 
+                                      class="text-[10px] font-black tracking-wider px-2 py-0.5 rounded-md border backdrop-blur-sm uppercase" x-text="'Cấp ' + mob.tier"></span>
+                                <span :class="getThreatClass(mob.threat)" class="text-[9px] uppercase font-bold px-2 py-0.5 rounded-md border backdrop-blur-sm" x-text="mob.threat"></span>
+                            </div>
+                            <button @click.stop="promptImageEdit(mob)" 
+                                    class="absolute top-3 right-3 bg-black/50 hover:bg-black/70 backdrop-blur-md border border-white/10 text-slate-300 hover:text-white p-2 rounded-lg text-xs transition-all opacity-0 group-hover:opacity-100">
+                                <i class="fa-solid fa-pen-to-square text-amber-400"></i>
+                            </button>
+                        </div>
+
+                        <!-- Header info (when no image, show badges here) -->
+                        <div class="p-5 border-b border-indigo-950/30 relative">
+                            <div x-show="!showImages" class="flex gap-1.5 mb-2">
+                                <span :class="mob.tier === 1 ? 'bg-cyan-950 text-cyan-400 border-cyan-800' : 'bg-rose-950 text-rose-400 border-rose-850'" 
+                                      class="text-[10px] font-black tracking-wider px-2 py-0.5 rounded-md border uppercase" x-text="'Cấp ' + mob.tier"></span>
+                                <span :class="getThreatClass(mob.threat)" class="text-[9px] uppercase font-bold px-2 py-0.5 rounded-md border" x-text="mob.threat"></span>
+                            </div>
+                            <div class="flex items-center gap-2.5">
+                                <div class="mob-name-icon mob-name-icon-sm" :class="getMobNameStyle(mob).iconBox">
+                                    <i class="fa-solid" :class="getMobNameStyle(mob).icon"></i>
+                                </div>
+                                <h3 class="text-xl font-extrabold leading-tight mob-name-title bg-clip-text text-transparent group-hover:brightness-110 transition-all"
+                                    :class="getMobNameStyle(mob).textGradient"
+                                    x-text="mob.name"></h3>
+                            </div>
+                            <p class="text-sm text-indigo-300/90 mt-2 leading-relaxed line-clamp-2" x-text="mob.role"></p>
+                        </div>
+
+                        <!-- Stats Content Block -->
+                        <div class="p-5 space-y-3.5 flex-grow">
+                            <!-- HP Bar -->
+                            <div>
+                                <div class="flex justify-between text-xs mb-1.5">
+                                    <span class="text-slate-300 flex items-center gap-1.5 font-semibold text-sm"><i class="fa-solid fa-heart text-rose-400 text-[11px]"></i> HP</span>
+                                    <strong class="text-rose-300 font-mono text-base" x-text="mob.hp"></strong>
+                                </div>
+                                <div class="w-full bg-slate-950/80 rounded-full h-2.5 overflow-hidden border border-red-950/60">
+                                    <div class="h-full rounded-full hp-bar-fill hp-bar-fill-red transition-all duration-700"
+                                         :style="'width: ' + getHpBarPercent(mob.hp) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <!-- Điểm nguy hiểm -->
+                            <div>
+                                <div class="flex justify-between text-xs mb-1.5">
+                                    <span class="text-slate-300 flex items-center gap-1.5 font-semibold text-sm"><i class="fa-solid fa-skull text-amber-500 text-[11px]"></i> Điểm nguy hiểm</span>
+                                    <strong class="text-amber-300 font-mono text-base" x-text="(getMobThreatScore(mob) / 10).toFixed(1)"></strong>
+                                </div>
+                                <div class="w-full bg-slate-950/80 rounded-full h-2 overflow-hidden border border-amber-950/50">
+                                    <div class="h-full rounded-full score-bar-fill shimmer transition-all duration-700"
+                                         :style="'width: ' + getMobThreatScorePercent(mob) + '%'"></div>
+                                </div>
+                            </div>
+
+                            <!-- Stat chips -->
+                            <div class="grid grid-cols-3 gap-2 text-xs">
+                                <div class="text-center p-2 rounded-xl bg-slate-950/60 border border-indigo-950/50">
+                                    <div class="text-[10px] text-amber-500/90 uppercase font-bold mb-0.5">DMG</div>
+                                    <strong class="text-white font-mono text-base" x-text="mob.damage"></strong>
+                                </div>
+                                <div class="text-center p-2 rounded-xl bg-slate-950/60 border border-indigo-950/50">
+                                    <div class="text-[10px] text-cyan-500/90 uppercase font-bold mb-0.5">SPD</div>
+                                    <strong class="text-white font-mono text-base" x-text="mob.speed"></strong>
+                                </div>
+                                <div class="text-center p-2 rounded-xl bg-slate-950/60 border border-indigo-950/50">
+                                    <div class="text-[10px] text-violet-400/90 uppercase font-bold mb-0.5">Skill</div>
+                                    <strong class="text-white font-mono text-base" x-text="mob.skills.length"></strong>
+                                </div>
+                            </div>
+
+                            <!-- Minions -->
+                            <template x-if="mob.minions && mob.minions.length > 0">
+                                <div class="p-2.5 bg-amber-950/15 border border-amber-900/25 rounded-xl space-y-1.5">
+                                    <div class="text-[9px] text-amber-400 uppercase tracking-widest font-black flex items-center gap-1">
+                                        <i class="fa-solid fa-people-group"></i> Triệu hồi
+                                    </div>
+                                    <template x-for="minion in mob.minions" :key="minion.id">
+                                        <div class="flex items-center justify-between text-[11px] bg-black/30 px-2 py-1.5 rounded-lg">
+                                            <span class="text-slate-200 font-semibold truncate pr-2" x-text="minion.name"></span>
+                                            <span class="text-slate-500 font-mono shrink-0" x-text="minion.hp + '/' + minion.damage"></span>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Footer CTA -->
+                        <div class="px-5 py-3.5 border-t border-indigo-950/40 bg-black/20 flex justify-between items-center gap-2">
+                            <button @click="openMobModal(mob)" class="btn-primary flex-1 text-xs font-bold text-slate-950 px-4 py-2.5 rounded-xl flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-book-open"></i> Xem chi tiết & skill
+                            </button>
+                        </div>
+                    </article>
+                </template>
+            </div>
+
+            <!-- Empty state -->
+            <div x-show="filteredMobs.length === 0" class="text-center py-20 glass-panel rounded-2xl border border-indigo-900/30">
+                <i class="fa-solid fa-ghost text-5xl text-indigo-900 mb-4"></i>
+                <p class="text-slate-400 text-sm">Không tìm thấy quái phù hợp bộ lọc.</p>
+                <button @click="searchQuery = ''; selectedThreat = 'All'; selectedTier = 'all'" class="mt-4 text-xs text-indigo-400 hover:text-indigo-300 font-semibold">Xóa bộ lọc</button>
+            </div>
+        </div>
+
+        <!-- 2. COMPARE TAB -->
+        <div x-show="activeTab === 'compare'" class="glass-panel border border-indigo-900/40 rounded-2xl overflow-hidden shadow-2xl" x-transition>
+            <div class="p-6 border-b border-indigo-950/60 flex justify-between items-center flex-wrap gap-4 bg-gradient-to-r from-indigo-950/30 to-transparent">
+                <div>
+                    <h3 class="font-extrabold text-white text-lg tracking-wide flex items-center gap-2">
+                        <i class="fa-solid fa-chart-simple text-indigo-400"></i> Bảng So Sánh
+                    </h3>
+                    <p class="text-xs text-slate-400 mt-1">Nhấp tiêu đề cột để sắp xếp · Nhấp hàng để mở chi tiết</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <select x-model="selectedTier" class="bg-slate-950/80 border border-indigo-800/60 text-xs text-indigo-200 rounded-xl px-3 py-2.5 focus:ring-2 focus:ring-indigo-500/50 focus:outline-none">
+                        <option value="all">Tất cả Cấp</option>
+                        <option value="1">Cấp 1 (Linh Gác)</option>
+                        <option value="2">Cấp 2 (Tinh Nhuệ)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-slate-950/90 text-[10px] text-indigo-300 uppercase tracking-widest border-b border-indigo-950 sticky top-0 z-10 backdrop-blur-md">
+                        <tr>
+                            <th @click="sortBy('name')" class="py-4 px-6 cursor-pointer hover:bg-indigo-950/30 transition-colors">
+                                Quái <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                            <th @click="sortBy('tier')" class="py-4 px-4 cursor-pointer hover:bg-indigo-950/30 transition-colors text-center w-20">
+                                Cấp <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                            <th @click="sortBy('hp')" class="py-4 px-4 cursor-pointer hover:bg-indigo-950/30 transition-colors text-center w-20">
+                                HP <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                            <th @click="sortBy('damage')" class="py-4 px-4 cursor-pointer hover:bg-indigo-950/30 transition-colors text-center w-24">
+                                DMG <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                            <th @click="sortBy('speed')" class="py-4 px-4 cursor-pointer hover:bg-indigo-950/30 transition-colors text-center w-20">
+                                SPD <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                            <th class="py-4 px-6 min-w-[200px]">Phòng thủ</th>
+                            <th @click="sortBy('threat')" class="py-4 px-4 cursor-pointer hover:bg-indigo-950/30 transition-colors text-center w-28">
+                                Nguy hiểm <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                            <th @click="sortBy('score100')" class="py-4 px-4 cursor-pointer hover:bg-indigo-950/30 transition-colors text-center w-24">
+                                Điểm <i class="fa-solid fa-sort ml-1 opacity-50"></i>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template x-for="(mob, ri) in sortedMobs" :key="mob.id">
+                            <tr @click="openMobModal(mob)" class="compare-row cursor-pointer border-b border-indigo-950/30"
+                                :class="ri % 2 === 0 ? 'bg-slate-950/20' : 'bg-transparent'">
+                                <td class="py-3.5 px-6">
+                                    <div class="flex items-center gap-3">
+                                        <template x-if="showImages">
+                                            <img :src="mob.image" class="w-11 h-11 rounded-xl object-cover border border-indigo-900/60 shadow-md" onerror="this.src='https://placehold.co/100x100/0f172a/6366f1?text=?'">
+                                        </template>
+                                        <div class="min-w-0 flex items-center gap-2">
+                                            <div class="mob-name-icon mob-name-icon-sm" :class="getMobNameStyle(mob).iconBox">
+                                                <i class="fa-solid text-[10px]" :class="getMobNameStyle(mob).icon"></i>
+                                            </div>
+                                            <div class="font-bold truncate mob-name-title text-sm bg-clip-text text-transparent" :class="getMobNameStyle(mob).textGradient" x-text="mob.name"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span :class="mob.tier === 1 ? 'text-cyan-300 bg-cyan-950/60 border-cyan-800/50' : 'text-rose-300 bg-rose-950/60 border-rose-800/50'" 
+                                          class="px-2 py-0.5 rounded-md border text-[10px] font-black" x-text="'T' + mob.tier"></span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span class="text-rose-400 font-mono font-bold text-base" x-text="mob.hp"></span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span class="text-amber-400 font-mono font-bold text-base" x-text="mob.damage"></span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center font-mono text-slate-300 text-sm" x-text="mob.speed"></td>
+                                <td class="py-3.5 px-6 text-xs text-slate-400 max-w-xs">
+                                    <div class="line-clamp-2" x-text="formatDefenseSummary(mob)"></div>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span :class="getThreatClass(mob.threat)" class="text-[9px] px-2 py-1 rounded-lg border font-bold whitespace-nowrap">
+                                        <span x-text="mob.threat"></span>
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="text-amber-300 font-mono font-bold text-base" x-text="(getMobThreatScore(mob) / 10).toFixed(1)"></span>
+                                        <div class="w-16 bg-slate-950/80 rounded-full h-1.5 overflow-hidden border border-amber-950/50">
+                                            <div class="h-full rounded-full score-bar-fill transition-all duration-700"
+                                                 :style="'width: ' + getMobThreatScorePercent(mob) + '%'"></div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- 3. SIMULATOR TAB -->
+        <div x-show="activeTab === 'simulator'" class="grid grid-cols-1 lg:grid-cols-3 gap-5 md:gap-6" x-transition>
+            
+            <div class="lg:col-span-2 glass-panel border border-indigo-900/40 rounded-2xl p-5 md:p-6 space-y-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 border-b border-indigo-950/50 pb-4">
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg flex items-center gap-2">
+                            <i class="fa-solid fa-chess text-indigo-400"></i> Ghép Đội Quái
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">Chọn nhiều quái để phân tích debuff và độ nguy hiểm gộp.</p>
+                    </div>
+                    <div class="flex gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-indigo-900/40">
+                        <button @click="simLevelFilter = 'all'" :class="simLevelFilter === 'all' ? 'nav-tab-active text-white text-xs' : 'text-slate-400 hover:text-white text-xs'" class="px-3 py-1.5 rounded-lg transition-all font-semibold">Tất cả</button>
+                        <button @click="simLevelFilter = 1" :class="simLevelFilter === 1 ? 'bg-cyan-600 text-slate-950 font-bold text-xs' : 'text-slate-400 text-xs'" class="px-3 py-1.5 rounded-lg transition-all">T1</button>
+                        <button @click="simLevelFilter = 2" :class="simLevelFilter === 2 ? 'bg-rose-600 text-white font-bold text-xs' : 'text-slate-400 text-xs'" class="px-3 py-1.5 rounded-lg transition-all">T2</button>
+                    </div>
+                </div>
+
+                <!-- Selected chips -->
+                <div x-show="selectedSimulatorMobs.length > 0" class="flex flex-wrap gap-1.5 pb-2">
+                    <template x-for="sm in selectedSimulatorMobs" :key="sm.id">
+                        <button @click.stop="toggleSimulatorMob(sm)" 
+                                class="text-[10px] font-semibold px-2.5 py-1 rounded-lg border flex items-center gap-1.5 transition-all hover:opacity-80"
+                                :class="sm.tier === 1 ? 'bg-cyan-950/50 text-cyan-300 border-cyan-800/50' : 'bg-rose-950/50 text-rose-300 border-rose-800/50'">
+                            <span x-text="sm.name"></span>
+                            <i class="fa-solid fa-xmark text-[8px] opacity-60"></i>
+                        </button>
+                    </template>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5 max-h-[460px] overflow-y-auto pr-1">
+                    <template x-for="mob in mobs.filter(m => simLevelFilter === 'all' || m.tier === simLevelFilter)" :key="mob.id">
+                        <div @click="toggleSimulatorMob(mob)" 
+                             :class="[
+                                 isMobSelected(mob.id) ? (mob.tier === 1 ? 'sim-pick selected border-cyan-500/70 bg-cyan-950/25 text-cyan-400' : 'sim-pick selected border-rose-500/70 bg-rose-950/25 text-rose-400') : 'border-indigo-950/60 bg-slate-950/40 hover:border-indigo-700/50'
+                             ]"
+                             class="p-3 border rounded-xl cursor-pointer transition-all flex items-center justify-between group">
+                            <div class="flex items-center gap-2.5 min-w-0">
+                                <div class="w-4 h-4 rounded-md border-2 flex items-center justify-center shrink-0 transition-all"
+                                     :class="isMobSelected(mob.id) ? (mob.tier === 1 ? 'border-cyan-400 bg-cyan-500/30' : 'border-rose-400 bg-rose-500/30') : 'border-slate-700'">
+                                    <i x-show="isMobSelected(mob.id)" class="fa-solid fa-check text-[8px] text-white"></i>
+                                </div>
+                                <div class="min-w-0">
+                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                    <div class="mob-name-icon mob-name-icon-sm opacity-80" :class="getMobNameStyle(mob).iconBox">
+                                        <i class="fa-solid text-[9px]" :class="getMobNameStyle(mob).icon"></i>
+                                    </div>
+                                    <div class="text-xs font-bold truncate group-hover:brightness-110 transition-all mob-name-title bg-clip-text text-transparent" :class="getMobNameStyle(mob).textGradient" x-text="mob.name"></div>
+                                </div>
+                                    <div class="text-[10px] text-slate-500 font-mono" x-text="mob.hp + ' HP · ' + mob.damage + ' DMG'"></div>
+                                </div>
+                            </div>
+                            <span :class="getThreatClass(mob.threat)" class="text-[8px] px-1.5 py-0.5 rounded border shrink-0 ml-2" x-text="mob.threat"></span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="glass-panel border border-indigo-900/40 rounded-2xl p-5 md:p-6 space-y-5 flex flex-col">
+                <h4 class="font-bold text-white text-base flex items-center gap-2 pb-3 border-b border-indigo-950/50">
+                    <span class="w-8 h-8 rounded-lg bg-rose-950/60 border border-rose-900/50 flex items-center justify-center">
+                        <i class="fa-solid fa-triangle-exclamation text-rose-400 text-sm"></i>
+                    </span>
+                    Phân Tích Hiểm Họa
+                </h4>
+
+                <div x-show="selectedSimulatorMobs.length === 0" class="text-center py-14 flex-grow flex flex-col items-center justify-center">
+                    <div class="w-16 h-16 rounded-2xl bg-indigo-950/40 border border-indigo-900/40 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-hand-pointer text-2xl text-indigo-600"></i>
+                    </div>
+                    <p class="text-sm text-slate-400 font-medium">Chọn quái bên trái</p>
+                    <p class="text-[11px] text-slate-600 mt-1">Hệ thống sẽ tính độ nguy hiểm gộp</p>
+                </div>
+
+                <div x-show="selectedSimulatorMobs.length > 0" class="space-y-5 flex-grow" x-transition>
+                    <div>
+                        <div class="flex justify-between items-end mb-2">
+                            <span class="text-xs text-slate-400 font-medium">Mức đe dọa</span>
+                            <span class="font-black text-sm font-mono" :class="getThreatTextColor()" x-text="getSimulatedThreatLabel()"></span>
+                        </div>
+                        <div class="threat-meter-track w-full rounded-full h-4 overflow-hidden border border-indigo-950">
+                            <div class="h-full rounded-full transition-all duration-700 ease-out relative overflow-hidden" 
+                                 :class="getThreatBarColor()"
+                                 :style="'width: ' + getSimulatedThreatPercentage() + '%'">
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/20 to-transparent"></div>
+                            </div>
+                        </div>
+                        <p class="text-[10px] text-slate-600 mt-1.5 text-right" x-text="selectedSimulatorMobs.length + ' quái đã chọn'"></p>
+                    </div>
+
+                    <div class="space-y-2">
+                        <span class="text-[10px] text-indigo-400 font-bold uppercase tracking-widest">Cảnh báo tích lũy</span>
+                        <div class="space-y-2 max-h-[200px] overflow-y-auto pr-1">
+                            <template x-for="alert in getActiveAlerts()" :key="alert.title">
+                                <div class="p-3 rounded-xl border-l-[3px] text-xs bg-slate-950/50" :class="getAlertCardClass(alert.color)">
+                                    <div class="font-bold text-white flex items-center gap-2">
+                                        <i :class="'fa-solid ' + alert.icon"></i>
+                                        <span x-text="alert.title"></span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1.5 leading-relaxed" x-text="alert.desc"></p>
+                                </div>
+                            </template>
+                            <p x-show="getActiveAlerts().length === 0" class="text-[11px] text-slate-600 italic py-2">Không có cảnh báo đặc biệt.</p>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-xl bg-gradient-to-br from-amber-950/20 to-slate-950/40 border border-amber-900/25">
+                        <strong class="text-amber-400 text-xs flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-lightbulb"></i> Chiến thuật đề xuất
+                        </strong>
+                        <p class="text-[11px] text-slate-300 leading-relaxed" x-text="getDynamicStrategy()"></p>
+                    </div>
+                </div>
+
+                <button x-show="selectedSimulatorMobs.length > 0" @click="selectedSimulatorMobs = []" 
+                        class="w-full py-2.5 rounded-xl border border-indigo-900/50 text-xs text-slate-400 hover:text-white hover:bg-slate-900/50 transition-all font-semibold">
+                    <i class="fa-solid fa-rotate-left mr-1"></i> Xóa lựa chọn
+                </button>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="relative z-10 border-t border-indigo-950/50 mt-8 py-6 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-600">
+            <span class="fantasy-title text-transparent bg-clip-text bg-gradient-to-r from-slate-500 to-slate-600 text-sm">Sugeon Dungeon Codex</span>
+            <span>MythicMobs · Paper 1.21.1 · Dungeon T1 & T2</span>
+        </div>
+    </footer>
+
+    </div><!-- /relative z-10 -->
+
+    <!-- DETAILED MODAL -->
+    <div x-show="isModalOpen" class="fixed inset-0 z-50 flex items-center justify-center p-3 md:p-6 modal-backdrop backdrop-blur-sm" x-cloak
+         x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100">
+        <div class="modal-shell bg-gradient-to-b from-slate-900 to-slate-950 border border-indigo-800/40 rounded-3xl max-w-3xl w-full overflow-hidden flex flex-col max-h-[92vh]"
+             @click.away="closeModal()"
+             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+            
+            <!-- Modal Header -->
+            <div class="p-5 md:p-6 border-b border-indigo-950/60 bg-gradient-to-r from-indigo-950/80 via-slate-950 to-slate-950 flex items-start justify-between gap-4 relative">
+                <div class="absolute inset-0 overflow-hidden pointer-events-none rounded-t-3xl" aria-hidden="true">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-indigo-600/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3"></div>
+                </div>
+                <div class="relative">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span :class="activeMob?.tier === 1 ? 'bg-cyan-500/15 text-cyan-300 border-cyan-600/40' : 'bg-rose-500/15 text-rose-300 border-rose-600/40'" 
+                              class="text-[9px] uppercase font-black tracking-widest px-2.5 py-1 rounded-lg border" x-text="'Cấp ' + activeMob?.tier"></span>
+                        <span :class="getThreatClass(activeMob?.threat)" class="text-[9px] uppercase font-black tracking-widest px-2.5 py-1 rounded-lg border" x-text="activeMob?.threat"></span>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2">
+                        <div class="mob-name-icon mob-name-icon-lg" :class="getMobNameStyle(activeMob).iconBox">
+                            <i class="fa-solid" :class="getMobNameStyle(activeMob).icon"></i>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-black tracking-tight mob-name-title bg-clip-text text-transparent"
+                            :class="getMobNameStyle(activeMob).textGradient"
+                            x-text="activeMob?.name"></h2>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-2 max-w-md leading-relaxed" x-text="activeMob?.role"></p>
+                </div>
+                <button @click="closeModal()" class="relative shrink-0 p-2.5 text-slate-400 hover:text-white bg-slate-900/80 border border-indigo-900/50 hover:border-indigo-700 rounded-xl transition-all hover:rotate-90 duration-300">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+
+            <!-- Modal Content (Scrollable with images space) -->
+            <div class="p-6 overflow-y-auto space-y-6 flex-grow">
+                
+                <!-- Image inside detailed modal (Show if active) -->
+                <div x-show="showImages && activeMob" class="relative detail-image-square w-full rounded-2xl bg-slate-900 overflow-hidden border border-indigo-950 shadow-md">
+                    <img :src="activeMob?.image" alt="Detailed Monster Visual representation" 
+                         class="w-full h-full object-cover opacity-90"
+                         onerror="this.src='https://placehold.co/400x400/0f172a/cbd5e1?text=Sugeon+Dungeon'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent"></div>
+                    
+                    <button @click.stop="promptImageEdit(activeMob)" 
+                            class="absolute bottom-3 right-3 bg-slate-950/90 hover:bg-indigo-950 border border-indigo-850 text-white px-3 py-1.5 rounded-xl text-xs transition-all flex items-center gap-1.5 shadow">
+                        <i class="fa-solid fa-image text-amber-500"></i> Thay đổi liên kết ảnh ✎
+                    </button>
+                </div>
+
+                <!-- Custom inline editing space inside modal if user chooses not to view images -->
+                <div x-show="!showImages" class="bg-indigo-950/20 border border-indigo-950/60 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <p class="text-xs text-indigo-300">Chế độ hình ảnh đang tắt. Bạn vẫn có thể quản lý liên kết hình ảnh quái vật tại đây.</p>
+                    <button @click.stop="promptImageEdit(activeMob)" class="bg-slate-950 hover:bg-indigo-950 text-amber-400 border border-indigo-950 text-xs px-3.5 py-2 rounded-xl transition-all font-bold">
+                        Dán liên kết ảnh quái ✎
+                    </button>
+                </div>
+
+                <!-- Core attributes stats grid -->
+                <div class="grid grid-cols-3 gap-2 md:gap-3">
+                    <div class="text-center p-3 md:p-4 rounded-2xl bg-gradient-to-b from-rose-950/30 to-slate-950/50 border border-rose-900/30">
+                        <i class="fa-solid fa-heart text-rose-500 text-xs mb-1"></i>
+                        <span class="text-[9px] text-rose-300/80 uppercase font-bold tracking-wider block">HP</span>
+                        <div class="text-xl font-black text-rose-400 font-mono mt-0.5" x-text="activeMob?.hp"></div>
+                    </div>
+                    <div class="text-center p-3 md:p-4 rounded-2xl bg-gradient-to-b from-amber-950/30 to-slate-950/50 border border-amber-900/30">
+                        <i class="fa-solid fa-burst text-amber-500 text-xs mb-1"></i>
+                        <span class="text-[9px] text-amber-300/80 uppercase font-bold tracking-wider block">DMG</span>
+                        <div class="text-xl font-black text-amber-400 font-mono mt-0.5" x-text="activeMob?.damage"></div>
+                    </div>
+                    <div class="text-center p-3 md:p-4 rounded-2xl bg-gradient-to-b from-cyan-950/30 to-slate-950/50 border border-cyan-900/30">
+                        <i class="fa-solid fa-person-running text-cyan-500 text-xs mb-1"></i>
+                        <span class="text-[9px] text-cyan-300/80 uppercase font-bold tracking-wider block">SPD</span>
+                        <div class="text-xl font-black text-cyan-400 font-mono mt-0.5" x-text="activeMob?.speed"></div>
+                    </div>
+                </div>
+
+                <!-- Trang bị & Kháng sát thương -->
+                <div class="defense-card rounded-2xl p-4 md:p-5 space-y-4">
+                    <div class="flex items-center justify-between gap-3 border-b border-indigo-950/50 pb-3">
+                        <h3 class="text-sm font-bold text-indigo-300 uppercase tracking-widest flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                            Trang bị & Kháng sát thương
+                        </h3>
+                        <template x-if="activeMob?.kb">
+                            <span class="text-[10px] font-bold px-2 py-1 rounded-lg bg-slate-950/80 border border-indigo-900 text-slate-400">
+                                KB <span class="text-cyan-300" x-text="activeMob?.kb"></span>
+                            </span>
+                        </template>
+                    </div>
+
+                    <!-- Trang bị -->
+                    <template x-if="parseArmorLoadout(activeMob?.armor).length > 0">
+                        <div class="space-y-2">
+                            <p class="text-[10px] uppercase tracking-widest text-amber-500/90 font-black flex items-center gap-1.5">
+                                <i class="fa-solid fa-user-shield"></i> Trang bị
+                            </p>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="(gear, gi) in parseArmorLoadout(activeMob?.armor)" :key="'gear-' + gi">
+                                    <span class="defense-chip defense-chip-gear">
+                                        <i class="fa-solid text-[10px]" :class="gear.icon"></i>
+                                        <span x-text="gear.text"></span>
+                                    </span>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <!-- Kháng sát thương -->
+                    <template x-if="parseDamageModifiers(activeMob?.modifiers).length > 0">
+                        <div class="space-y-2.5">
+                            <p class="text-[10px] uppercase tracking-widest text-cyan-400/90 font-black flex items-center gap-1.5">
+                                <i class="fa-solid fa-shield-virus"></i> Kháng sát thương
+                            </p>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                <template x-for="(mod, mi) in parseDamageModifiers(activeMob?.modifiers)" :key="'mod-' + mi">
+                                    <div class="p-3 rounded-xl bg-slate-950/70 border border-indigo-950/60 flex items-center gap-3"
+                                         :class="mod.type === 'immune' ? 'border-emerald-900/40' : ''">
+                                        <div class="shrink-0 w-9 h-9 rounded-lg flex items-center justify-center border"
+                                             :class="mod.type === 'immune' ? 'bg-emerald-950/60 border-emerald-800/50 text-emerald-400' : 'bg-indigo-950/60 border-indigo-800/50 text-indigo-300'">
+                                            <i class="fa-solid text-sm" :class="mod.icon"></i>
+                                        </div>
+                                        <div class="min-w-0 flex-1">
+                                            <div class="text-xs font-bold text-white truncate" x-text="mod.label"></div>
+                                            <div class="text-[11px] mt-0.5 font-semibold"
+                                                 :class="mod.type === 'immune' ? 'text-emerald-400' : 'text-indigo-300'"
+                                                 x-text="mod.display"></div>
+                                            <template x-if="mod.type === 'resist' && mod.barPercent != null">
+                                                <div class="resist-meter mt-1.5">
+                                                    <div class="resist-meter-fill" :style="'width:' + mod.barPercent + '%'"></div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template x-if="!parseArmorLoadout(activeMob?.armor).length && !parseDamageModifiers(activeMob?.modifiers).length">
+                        <p class="text-xs text-slate-500 italic">Không có trang bị đặc biệt hay kháng sát thương ghi nhận.</p>
+                    </template>
+                </div>
+
+                <!-- Nested Summons / Minions info -->
+                <template x-if="activeMob?.minions && activeMob?.minions.length > 0">
+                    <div class="bg-amber-950/10 border border-amber-900/30 rounded-2xl p-4 space-y-3">
+                        <h4 class="text-xs text-amber-400 uppercase tracking-widest font-black flex items-center gap-1.5 border-b border-amber-900/20 pb-2">
+                            <i class="fa-solid fa-users-viewfinder"></i> Lực Lượng Triệu Hồi Liên Kết (Quái Phụ)
+                        </h4>
+                        <div class="space-y-3">
+                            <template x-for="minion in activeMob?.minions" :key="minion.id">
+                                <div class="bg-slate-950/80 p-3.5 border border-indigo-950 rounded-xl space-y-2">
+                                    <div class="flex justify-between items-center flex-wrap gap-1">
+                                        <span class="text-sm font-bold text-slate-100" x-text="minion.name"></span>
+                                    </div>
+                                    <div class="grid grid-cols-3 gap-2 text-xs text-slate-400 font-mono">
+                                        <span>HP: <strong class="text-rose-400 font-bold" x-text="minion.hp"></strong></span>
+                                        <span>DMG: <strong class="text-amber-400 font-bold" x-text="minion.damage"></strong></span>
+                                        <span>Tốc độ: <strong class="text-cyan-400 font-bold" x-text="minion.speed"></strong></span>
+                                    </div>
+                                    <p class="text-xs text-slate-300 italic" x-text="'Đặc tính: ' + minion.role"></p>
+                                    
+                                    <!-- Minion Skills -->
+                                    <template x-if="minion.skills && minion.skills.length > 0">
+                                        <div class="pt-3 border-t border-indigo-950/40 space-y-2">
+                                            <p class="text-[10px] uppercase tracking-widest text-indigo-400 font-bold">Kỹ năng</p>
+                                            <template x-for="(mskill, mi) in minion.skills" :key="mskill.name">
+                                                <div class="skill-card bg-slate-900/60 border border-indigo-950/70 pl-3.5 pr-3 py-2.5"
+                                                     :class="getSkillCategoryStyle(getSkillCategory(mskill)).cardBorder">
+                                                    <div class="skill-card-accent" :class="getSkillCategoryStyle(getSkillCategory(mskill)).accent"></div>
+                                                    <div class="flex items-start gap-2">
+                                                        <span class="shrink-0 w-5 h-5 rounded-md bg-slate-950 border border-indigo-900 flex items-center justify-center text-[9px] font-black text-indigo-400" x-text="mi + 1"></span>
+                                                        <div class="min-w-0 flex-1 space-y-1">
+                                                            <div class="flex flex-wrap items-center gap-1.5">
+                                                                <span class="text-xs font-bold text-white" x-text="parseSkillName(mskill.name).title"></span>
+                                                                <template x-if="parseSkillName(mskill.name).code">
+                                                                    <span class="text-[9px] font-mono text-slate-500" x-text="parseSkillName(mskill.name).code"></span>
+                                                                </template>
+                                                            </div>
+                                                            <span class="skill-chip border"
+                                                                  :class="getSkillTriggerChipClass(mskill.trigger)"
+                                                                  x-text="getSkillTriggerMeta(mskill.trigger).label"></span>
+                                                            <p class="skill-effect-text text-[11px] leading-relaxed" x-html="highlightEffectText(mskill.effect)"></p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </div>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- Core Skills -->
+                <div>
+                    <div class="flex items-center justify-between gap-3 mb-4 border-b border-indigo-950/40 pb-3">
+                        <h3 class="text-sm font-bold text-indigo-300 uppercase tracking-widest flex items-center gap-2">
+                            <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
+                            Kỹ năng chiến đấu
+                        </h3>
+                        <span class="text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg bg-indigo-950/60 border border-indigo-900 text-indigo-300"
+                              x-text="(activeMob?.skills?.length || 0) + ' skill'"></span>
+                    </div>
+
+                    <div class="space-y-3">
+                        <template x-for="(skill, si) in activeMob?.skills" :key="skill.name + si">
+                            <article class="skill-card bg-gradient-to-r border border-indigo-950/70 pl-4 pr-4 py-4"
+                                     :class="getSkillCategoryStyle(getSkillCategory(skill)).cardBg + ' ' + getSkillCategoryStyle(getSkillCategory(skill)).cardBorder">
+                                <div class="skill-card-accent" :class="getSkillCategoryStyle(getSkillCategory(skill)).accent"></div>
+
+                                <!-- Header row -->
+                                <div class="flex items-start gap-3 mb-3">
+                                    <div class="shrink-0 w-8 h-8 rounded-xl flex items-center justify-center text-xs font-black border shadow-inner"
+                                         :class="getSkillCategoryStyle(getSkillCategory(skill)).indexBox">
+                                        <span x-text="si + 1"></span>
+                                    </div>
+                                    <div class="min-w-0 flex-1">
+                                        <div class="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+                                            <h4 class="font-extrabold text-white text-base leading-tight" x-text="parseSkillName(skill.name).title"></h4>
+                                            <template x-if="parseSkillName(skill.name).code">
+                                                <code class="text-[10px] font-mono text-indigo-400/90 bg-indigo-950/50 px-1.5 py-0.5 rounded border border-indigo-900/50"
+                                                      x-text="parseSkillName(skill.name).code"></code>
+                                            </template>
+                                        </div>
+                                        <div class="flex items-center gap-1.5 mt-1">
+                                            <i class="fa-solid text-[10px]" :class="getSkillCategoryStyle(getSkillCategory(skill)).icon + ' ' + getSkillCategoryStyle(getSkillCategory(skill)).iconColor"></i>
+                                            <span class="text-[10px] uppercase tracking-wider font-bold" :class="getSkillCategoryStyle(getSkillCategory(skill)).labelColor" x-text="getSkillCategoryLabel(getSkillCategory(skill))"></span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Trigger & CD badges -->
+                                <div class="flex flex-wrap gap-1.5 mb-3 ml-11">
+                                    <span class="skill-chip border bg-slate-950/80"
+                                          :class="getSkillTriggerChipClass(skill.trigger)">
+                                        <i class="fa-solid text-[9px]" :class="getSkillTriggerMeta(skill.trigger).icon"></i>
+                                        <span x-text="getSkillTriggerMeta(skill.trigger).label"></span>
+                                    </span>
+                                    <template x-if="extractCooldown(skill.trigger)">
+                                        <span class="skill-chip border bg-amber-950/50 text-amber-300 border-amber-900/60">
+                                            <i class="fa-solid fa-hourglass-half text-[9px]"></i>
+                                            <span x-text="'CD ' + extractCooldown(skill.trigger)"></span>
+                                        </span>
+                                    </template>
+                                    <template x-if="skill.cooldown">
+                                        <span class="skill-chip border bg-amber-950/50 text-amber-300 border-amber-900/60" x-text="'Hồi chiêu: ' + skill.cooldown"></span>
+                                    </template>
+                                    <template x-for="chip in extractSkillChips(skill).filter(c => c.type !== 'cd')" :key="chip.text">
+                                        <span class="skill-chip border" :class="chip.class">
+                                            <i class="fa-solid text-[9px]" :class="chip.icon"></i>
+                                            <span x-text="chip.text"></span>
+                                        </span>
+                                    </template>
+                                </div>
+
+                                <!-- Effect body -->
+                                <div class="ml-11 p-3 rounded-xl bg-slate-950/50 border border-indigo-950/50">
+                                    <p class="skill-effect-text" x-html="highlightEffectText(skill.effect)"></p>
+                                </div>
+
+                            </article>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-4 bg-slate-950 border-t border-indigo-950 text-center">
+                <p class="text-[10px] text-slate-500 font-mono uppercase tracking-widest">Nguồn: MythicMobs Configuration & YAML Files</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APP STATE & SCRIPT -->
+    <script>
+        function dungeonApp() {
+            return {
+                // Application States
+                activeTab: 'codex',
+                searchQuery: '',
+                selectedThreat: 'All',
+                selectedTier: 'all',
+                simLevelFilter: 'all',
+                isModalOpen: false,
+                activeMob: null,
+                selectedSimulatorMobs: [],
+                sortByColumn: 'name',
+                sortAscending: true,
+                showImages: true, // Default to true so beautiful placeholder visuals are visible
+
+                // Core Monsters Database — đồng bộ tong_hop_quai_dungeon_T1.md + T2.md (2026-06-21)
+                mobs: [
+                    // === CẤP 1 (TIER 1) MONSTERS ===
+                    {
+                        id: 'DungeonDrowned_T1',
+                        name: 'Thâm U Thủy Sát',
+                        tier: 1,
+                        hp: 110,
+                        damage: 17,
+                        speed: 0.4,
+                        armor: 'Giáp sắt full, Bảo Vệ IV, Chống Mũi Tên II, Đinh Ba Đâm III',
+                        modifiers: null,
+                        kb: '10%',
+                        threat: 'Cao',
+                        score100: 35,
+                        image: 'images/Tham_u_thuy_sat.png',
+                        role: 'Tank cận chiến, áp lực sóng nước và đinh ba, hồi máu khi trúng đòn',
+                        skills: [
+                            { name: 'Sóng Thủy (TidePulse)', trigger: 'Mỗi ~4 giây', effect: '30 sát thương, bán kính ~6 block.' },
+                            { name: 'Kim Mưu Muối (SaltNeedle)', trigger: 'Mỗi ~4 giây', effect: 'Chậm II (6 giây), bán kính ~12 block.' },
+                            { name: 'Bong Bóng Đinh Ba (TridentBubble)', trigger: '~onAttack trúng player (CD 8s)', effect: '35 sát thương; hồi 20 máu.' },
+                            { name: 'Sóng Thần (SongThan)', trigger: 'Máu < 50% (CD 30s, 1 lần)', effect: '40 sát thương ~8 block, mù 3 giây, hất tung mạnh.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonStray_T1',
+                        name: 'Sương Cốt Du Tiễn',
+                        tier: 1,
+                        hp: 130,
+                        damage: 22,
+                        speed: 0.35,
+                        armor: 'Không giáp, miễn nhiễm mũi tên hoàn toàn',
+                        modifiers: 'PROJECTILE 0 (Miễn tên) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)',
+                        kb: '0%',
+                        threat: 'Cao',
+                        score100: 40,
+                        image: 'images/Suong_cot_du_tien.png',
+                        role: 'Xạ thủ tầm xa, debuff, nổ băng khi chết buff đồng minh',
+                        skills: [
+                            { name: 'Màn Sương Băng (FrostVeil)', trigger: 'Mỗi ~4 giây (CD 9s)', effect: 'Yếu đi II (8 giây) + Chậm I (2,5 giây), ~8 block.' },
+                            { name: 'Mảnh Băng (RimeShard)', trigger: 'Mỗi ~5 giây', effect: '25 sát thương, ~9 block.' },
+                            { name: 'Băng Tiễn (BangTien)', trigger: 'Mỗi ~4 giây (CD 8s)', effect: '35 sát thương; hồi 20 máu.' },
+                            { name: 'Huyết Tế Băng Giá (HuyetTe)', trigger: '~onDeath', effect: '40 sát thương (~16 block), hất tung, choáng 9 giây; hồi 25 máu đồng minh trong 16 block.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonSkeleton_T1',
+                        name: 'Bạch Cốt Thành Vệ',
+                        tier: 1,
+                        hp: 90,
+                        damage: 14,
+                        speed: 0.3,
+                        armor: 'Giáp sắt full, Bảo Vệ IV, Chống Mũi Tên II, Kiếm sắt Sắc bén IV',
+                        modifiers: null,
+                        kb: '0%',
+                        threat: 'Rất khó',
+                        score100: 52,
+                        image: 'images/Bach_cot_thanh_ve.png',
+                        role: 'Kiếm sĩ điện — cận chiến + vòng sét + bão điện 30/s',
+                        skills: [
+                            { name: 'Nanh Điện (VoltFang)', trigger: '~onAttack trúng player (CD 8s)', effect: '35 sát thương + sét; tăng tốc 3 giây.' },
+                            { name: 'Nhảy Bóng (ShadowBlink)', trigger: '~onDamaged (CD 10s)', effect: '30 sát thương, mù 2 giây, đẩy lùi; hồi 20 máu.' },
+                            { name: 'Thiên Lôi (ThienLoi)', trigger: 'Mỗi ~12,5 giây (CD 20s)', effect: '6 tia sét: mỗi tia 25 sát thương + cháy 5 giây (~3 block).' },
+                            { name: 'Bão Điện Từ (BaoDienTu)', trigger: 'Mỗi ~15 giây (CD 22s)', effect: 'Trong 7 giây, mỗi giây 30 sát thương + Yếu đi I (~6 giây), ~6 block.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonZombie_T1',
+                        name: 'Cương Thi Địa Lao',
+                        tier: 1,
+                        hp: 110,
+                        damage: 17,
+                        speed: 0.35,
+                        armor: 'Giáp sắt full, Bảo Vệ IV, Chống Mũi Tên II, Kiếm sắt Sắc bén IV + Đẩy lùi I',
+                        modifiers: null,
+                        kb: '0%',
+                        threat: 'Cao',
+                        score100: 47,
+                        image: 'images/Cuong_thi_ia_lao.png',
+                        role: 'Tank chậm, debuff vùng Wither II + phản công khi bị đánh 3 lần liên tiếp',
+                        skills: [
+                            { name: 'Âm Trường Địa Lao', trigger: 'Mỗi ~9 giây (CD 9s)', effect: 'Đói II (5 giây) + Wither II (6 giây), ~6 block.' },
+                            { name: 'Tử Khí', trigger: 'Mỗi ~10 giây', effect: 'Mù 2 giây, kéo gần 2 nhịp, 35 sát thương; hồi 20 máu.' },
+                            { name: 'Điện Loạn', trigger: 'Bị đánh 3 lần liên tiếp (CD 15s)', effect: 'Lao vào: 40 sát thương + hất văng.' },
+                            { name: 'Vùng Xác Tanh', trigger: '~onDeath', effect: '6 nhịp Độc III (4 giây/nhịp), ~6 block.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonCreeper_T1',
+                        name: 'Phược Nổ Cuồng Linh',
+                        tier: 1,
+                        hp: 160,
+                        damage: 12,
+                        speed: 0.44,
+                        armor: 'Không giáp, kháng tấn công vật lý rất cao',
+                        modifiers: 'PROJECTILE 0 (Miễn đạn) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)',
+                        kb: '0%',
+                        threat: 'Rất khó',
+                        score100: 60,
+                        image: 'images/Phuot_no_cuong_linh.png',
+                        role: 'Bom di động — chạy nhanh, sát thương vùng lớn, triệu hồi 3 mini',
+                        skills: [
+                            { name: 'Sóng Hỏa (FireShockwave)', trigger: 'Mỗi ~8 giây (CD 10s)', effect: '35 sát thương + cháy 5 giây + hất tung, ~10 block.' },
+                            { name: 'Nổ Phản (CounterBloom)', trigger: '~onDamaged (CD 6s)', effect: '30 sát thương + Chậm III (3 giây), ~6 block.' },
+                            { name: 'Rãi Bơm (RaiBom)', trigger: '~onDamaged (CD 16s)', effect: 'Triệu hồi 3 Bơm Mini; hồi 25 máu.' },
+                            { name: 'Thiên Nhiên Trỗi Dậy (NatureBloom)', trigger: 'Mỗi ~10 giây (CD 25s)', effect: 'Vùng ~14 block trong 8 giây: 30 sát thương + choáng 1 giây mỗi ~4 giây.' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonCreeperMini_T1',
+                                name: 'Bơm Nổ Mini',
+                                hp: 40,
+                                damage: 12,
+                                speed: 0.44,
+                                role: 'Lính phụ do Creeper chính triệu hồi',
+                                skills: [
+                                    { name: 'Ô Nhiễm Mini', trigger: '~onDeath', effect: '30 sát thương + 3 nhịp Độc III (3 giây/nhịp), ~6 block.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonCaveSpider_T1',
+                        name: 'Hiệm Tơ Âm Phủ',
+                        tier: 1,
+                        hp: 110,
+                        damage: 17,
+                        speed: 0.4,
+                        armor: 'Khiên tơ 10 HP hấp thụ, làm mới mỗi ~10 giây',
+                        modifiers: 'ENTITY_ATTACK 0.4 (Chỉ nhận 40% dame tay)',
+                        kb: '0%',
+                        threat: 'Rất khó',
+                        score100: 48,
+                        image: 'images/Hiem_to_am_phu.png',
+                        role: 'Assassin nhanh — khống chế, acid, khiên, phân thân khi máu thấp',
+                        skills: [
+                            { name: 'Cắn Độc (VenomBite)', trigger: '~onAttack (CD 10s)', effect: 'Mù 2 giây + choáng 2 giây.' },
+                            { name: 'Khạt Acid (KhatAcid)', trigger: '~onAttack (CD 14s)', effect: 'Vùng ~6 block: 35 sát thương, Đói II + Yếu đi II (4 giây).' },
+                            { name: 'Khiên Tơ (SilkShield)', trigger: '~onTimer:200', effect: 'Khiên 10 HP hấp thụ, làm mới mỗi ~10 giây.' },
+                            { name: 'Phân Thân (PhanThan)', trigger: 'Máu < 60% (CD 60s, 1 lần)', effect: 'Triệu hồi 1 bản sao (70 máu).' },
+                            { name: 'Ô Nhiễm Tử Vong', trigger: '~onDeath', effect: '35 sát thương + hất tung; hồi 20 máu đồng minh.' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonCaveSpider_T1_Anh',
+                                name: 'Hiệm Tơ (Bản sao)',
+                                hp: 70,
+                                damage: 12,
+                                speed: 0.4,
+                                role: 'Ảo ảnh phân thân — skill mở ngay, không phân thân',
+                                skills: [
+                                    { name: 'Cắn Độc', trigger: '~onAttack (CD 10s)', effect: 'Mù 2 giây + choáng 2 giây.' },
+                                    { name: 'Ô Nhiễm Tử Vong', trigger: '~onDeath', effect: '35 sát thương + hất tung; hồi 20 máu đồng minh.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonHusk_T1',
+                        name: 'Sa Mộ Khô Hồn',
+                        tier: 1,
+                        hp: 90,
+                        damage: 16,
+                        speed: 0.3,
+                        armor: 'Giáp vàng full, Bảo Vệ IV, Chống Mũi Tên II, Kiếm vàng Sắc bén IV + Hỏa Nguyên I',
+                        modifiers: null,
+                        kb: '0%',
+                        threat: 'Cao',
+                        score100: 57,
+                        image: 'images/Sa_mo_kho_hon.png',
+                        role: 'Pháp sư sa mạc — vùng nóng, cầu lửa, bão cát, cát lún, kỵ lạc 210 HP',
+                        skills: [
+                            { name: 'Thiêu Đốt Sa Mạc (DesertAuraTick)', trigger: 'Mỗi ~0,5 giây', effect: 'Cháy player trong ~6 block.' },
+                            { name: 'Ôm Lửa (FireEmbrace)', trigger: '~onDamaged (CD 6s)', effect: 'Hồi 20 máu.' },
+                            { name: 'Cầu Lửa Gió (GaleOrbs)', trigger: 'Mỗi ~6 giây (CD 13s)', effect: '4 cầu lửa; mỗi viên trúng 30 sát thương + đẩy.' },
+                            { name: 'Bão Cát (Sandstorm)', trigger: 'Mỗi ~8 giây (CD 17s)', effect: '3 đợt: mỗi đợt 30 sát thương + buồn nôn II + bay lên 4 giây.' },
+                            { name: 'Cát Lún (Quicksand)', trigger: 'Mỗi ~8 giây (CD 18s)', effect: 'Vùng ~10 block trong 6 giây: Chậm IV + kéo về tâm mỗi giây.' },
+                            { name: 'Kỵ Lạc Sa Mạc (CamelCharge)', trigger: 'Máu < 50% (1 lần)', effect: 'Cưỡi lạc đà 210 HP, kháng lửa + tăng tốc vĩnh viễn đến khi xuống.' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonHuskCamel_T1',
+                                name: 'Kỵ Lạc Sa Mạc (Thú cưỡi)',
+                                hp: 210,
+                                damage: 3,
+                                speed: 0.42,
+                                role: 'Thú cưỡi khổng lồ — đá gạc 30 dmg, hất văng cực mạnh',
+                                skills: [
+                                    { name: 'Đá Gạc (CamelBuck)', trigger: 'Mỗi ~3 giây', effect: '30 sát thương + hất văng rất mạnh (velocityY 14).' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonShulker_T1',
+                        name: 'Giới Hạp Phong Ấn',
+                        tier: 1,
+                        hp: 160,
+                        damage: 23,
+                        speed: 0.01,
+                        armor: 'Vỏ hạp phòng vệ tự nhiên, kháng đẩy lùi cực cao',
+                        modifiers: 'FIRE 0 · FIRE_TICK 0 (Miễn lửa) · ENTITY_ATTACK 0.4 (Chỉ nhận 40% dame cận chiến)',
+                        kb: '85%',
+                        threat: 'Cực khó',
+                        score100: 51,
+                        image: 'images/Gioi_hap_phong_an.png',
+                        role: 'Boss turret — đạn 23, barrage 35×10, vùng 40/tick, triệu mini khi trúng',
+                        skills: [
+                            { name: 'Triệu Mini (MiniSummonOnHit)', trigger: 'Đạn trúng player (CD 15s)', effect: 'Sinh 1 Ấn Giám Tí Hon (60 máu, đạn 22).' },
+                            { name: 'Hoán Đổi (SwapPrison)', trigger: '~onDamaged (CD 17s)', effect: 'Đổi vị trí + 30 sát thương + Chậm IV (4 giây).' },
+                            { name: 'Long Vực Hư Không (DragonVoidPrison)', trigger: 'Mỗi ~8 giây (CD 19s)', effect: 'Vùng ~8 block trong 6 giây: mỗi ~0,75 giây 40 sát thương + nhảy cao + đẩy.' },
+                            { name: 'Vạn Hạp Truy Kích (VoidBulletBarrage)', trigger: 'Mỗi ~5 giây (CD 13s)', effect: '10 viên — mỗi viên thêm 35 sát thương skill (+ đạn 23 base).' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonShulkerMini_T1',
+                                name: 'Ấn Giám Tí Hon',
+                                hp: 60,
+                                damage: 22,
+                                speed: 0.01,
+                                role: 'Lính tháp pháo phụ — nguy hiểm vì số lượng',
+                                skills: [
+                                    { name: 'Đạn Truy Kích', trigger: '~onShoot', effect: 'Nã đạn Shulker tầm xa, 22 sát thương mỗi phát trúng.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonWitch_T1',
+                        name: 'Cốt Độc Yểm Sư',
+                        tier: 1,
+                        hp: 160,
+                        damage: 12,
+                        speed: 0.36,
+                        armor: 'Không giáp, ném thuốc ~2× tốc độ',
+                        modifiers: 'PROJECTILE 0.12 (Chỉ nhận 12% dame bắn) · ENTITY_ATTACK 0.4 (Chỉ nhận 40% dame tay)',
+                        kb: '0%',
+                        threat: 'Rất khó',
+                        score100: 59,
+                        image: 'images/Cot_oc_kiem_su.png',
+                        role: 'Pháp sư hỗ trợ — 3 sói + Liên Kết 4 tia sét 30 dmg',
+                        skills: [
+                            { name: 'Phản Ánh Bóng Tối (Retreat)', trigger: 'Mỗi ~4,5 giây (CD 9s)', effect: 'Nhảy lùi ~4 block, tăng tốc II (4 giây), hồi 15 máu.' },
+                            { name: 'Tối Ám Khóa Hồn (DarkBurst)', trigger: 'Mỗi ~5,5 giây (CD 12s)', effect: 'Bóng tối + buồn nôn II + Wither II (4 giây) lên người gần nhất.' },
+                            { name: 'Bầy Chó Săn (HunterPack)', trigger: 'Mỗi ~7,5 giây (CD 20s)', effect: 'Triệu hồi 3 Sói Độc gần người chơi.' },
+                            { name: 'Liên Kết Đau Đớn (PainLink)', trigger: 'Mỗi ~3 giây (CD 15s)', effect: 'Sợi dây 8 giây + 4 tia sét, mỗi tia 30 sát thương (tối đa ~120 skill).' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonWitchWolf_T1',
+                                name: 'Sói Độc Dẫn Đường',
+                                hp: 110,
+                                damage: 22,
+                                speed: 0.42,
+                                role: 'Sói săn mồi — Speed I + Strength II vĩnh viễn, KB 100%',
+                                skills: [
+                                    { name: 'Bản Năng Khát Máu', trigger: '~onSpawn', effect: 'Tăng tốc I + Sức mạnh II vĩnh viễn đến khi chết.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonMagmaCube_T1',
+                        name: 'Nham Ma Nguyên Hỏa',
+                        tier: 1,
+                        hp: 160,
+                        damage: 27,
+                        speed: 2.5,
+                        armor: 'Size 6, kháng cận chiến cao, KB 60%',
+                        modifiers: 'ENTITY_ATTACK 0.4 (Chỉ nhận 40% dame tay)',
+                        kb: '60%',
+                        threat: 'Cực khó',
+                        score100: 66,
+                        image: 'images/Nham_ma_nguyen_hoa.png',
+                        role: 'Boss di động — cực nhanh, nuốt, keo lava, phản đòn; chết tách slime',
+                        skills: [
+                            { name: 'Phản Đòn Dung Nham (HeatRecoil)', trigger: '~onDamaged (CD 9s)', effect: '35 sát thương + cháy 5 giây + hất tung.' },
+                            { name: 'Nuốt Chửng (Engulf)', trigger: 'Mỗi ~6 giây (CD 23s)', effect: '5 giây: kéo mạnh + Chậm IV + 30 sát thương mỗi 0,25 giây + mù/buồn nôn.' },
+                            { name: 'Keo Hỏa Ngục (MoltenWeb)', trigger: 'Mỗi ~6 giây (CD 15s)', effect: 'Sóng keo ~8 block: 40 sát thương + Chậm IV + Mệt đào II + cháy.' },
+                            { name: 'Chế Giễu (DevourTaunt)', trigger: '~onPlayerKill (CD 30s)', effect: 'Hồi 50 máu khi giết người chơi.' }
+                        ],
+                        minions: []
+                    },
+
+                    // === CẤP 2 (TIER 2) MONSTERS ===
+                    {
+                        id: 'DungeonPiglin_T2',
+                        name: 'Liệt Trư Kim Giáp',
+                        tier: 2,
+                        hp: 100,
+                        damage: 20,
+                        speed: 0.32,
+                        armor: 'Netherite Full · Bảo Vệ IV + Gai II · Kiếm vàng Sắc bén IV + Hỏa nguyên II',
+                        modifiers: null,
+                        kb: '20%',
+                        threat: 'Rất khó',
+                        score100: 58,
+                        image: 'images/Liet_tru_kim_giap.png',
+                        role: 'Chiến binh cận–xa lửa — Cuồng Nộ Str+Speed khi máu < 50%',
+                        skills: [
+                            { name: 'Vàng Bùng Phát (GoldSurge)', trigger: '~onTimer:120 · CD 12s', effect: '40 sát thương + Chậm I (4 giây), r≈5.' },
+                            { name: 'Vòng Lửa (FireRing)', trigger: '~onTimer:100 · CD 16s (địch ≤8 block)', effect: '40 sát thương + cháy 4 giây, r≈8.' },
+                            { name: 'Pháo Kích (PhaoKich)', trigger: '~onTimer:160 · CD 13s', effect: '4 cầu lửa — mỗi cầu trúng 50 sát thương + Yếu I.' },
+                            { name: 'Lửa Thiên (LuaThien)', trigger: '~onTimer:200 · CD 17s', effect: '30 sát thương xuyên giáp + mù + Chậm III + hất tung.' },
+                            { name: 'Tia Hồn Lửa (TiaHonLua)', trigger: '~onTimer:180 · CD 25s', effect: 'Sóng 70 + 4 nổ chân player (20 xuyên giáp mỗi nổ).' },
+                            { name: 'Cuồng Nộ (RageTick)', trigger: 'Máu < 50%', effect: 'Sức mạnh I + Tăng tốc I vĩnh viễn đến khi chết.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonPillager_T2',
+                        name: 'Thập Tự Hỏa Tố',
+                        tier: 2,
+                        hp: 200,
+                        damage: 100,
+                        speed: 0.35,
+                        armor: 'Nỏ Quick Charge VI, Piercing IV — không giáp item',
+                        modifiers: 'PROJECTILE 0 (Miễn đạn) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)',
+                        kb: '0%',
+                        threat: 'Cực khó',
+                        score100: 69,
+                        image: 'images/Thap_tu_hoa_to.png',
+                        role: 'Tay nỏ elite — Hỏa Kích 80, Cuồng Phong 70, viện binh khi hấp hối',
+                        skills: [
+                            { name: 'Phun Tên (PhunTen)', trigger: '~onShoot · CD 5s', effect: 'Hồi 8 máu + thêm 50 sát thương lên mục tiêu.' },
+                            { name: 'Giáp Nỏ (GiapNo)', trigger: '~onDamaged · CD 10s', effect: 'Khiên 30 HP (~25 giây).' },
+                            { name: 'Hỏa Kích (HoaKich)', trigger: '~onShoot · CD 13s', effect: '80 sát thương + cháy ~10 giây + sóng lửa lan.' },
+                            { name: 'Cuồng Phong (CuongPhong)', trigger: '~onDamaged · CD 25s', effect: '70 sát thương r≈12, hất văng cực mạnh, rơi chậm 15 giây.' },
+                            { name: 'Viện Binh (VienBinh)', trigger: 'Máu < 40% · CD 180s', effect: 'Chậm II r≈25 + triệu 3 Kẻ Biện Hộ.' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonVindicator_BienHo',
+                                name: 'Kẻ Biện Hộ',
+                                hp: 100,
+                                damage: 20,
+                                speed: 0.4,
+                                role: 'Quân bảo vệ tiên phong — triệu bởi Viện Binh',
+                                skills: [
+                                    { name: 'Đột Kích Tay', trigger: 'Cận chiến', effect: 'Rìu sắt 20 dmg, nhận 40% đánh tay.' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonZPiglin_T2',
+                        name: 'Ma Trư Liệt Huyết',
+                        tier: 2,
+                        hp: 100,
+                        damage: 20,
+                        speed: 0.35,
+                        armor: 'Netherite Full · Bảo Vệ IV + Gai II · Rìu vàng Sắc bén IV + Smite III',
+                        modifiers: null,
+                        kb: '70%',
+                        threat: 'Rất khó',
+                        score100: 62,
+                        image: 'images/Ma_tru_liet_huyet.png',
+                        role: 'Phản công — 2 đòn liên tiếp kích phản đòn, mưa vàng 55, nổ chết',
+                        skills: [
+                            { name: 'Cắn Khô (DryBite)', trigger: '~onAttack · CD 10s', effect: 'Wither I + Đói I (5 giây).' },
+                            { name: 'Vỏ Lửa Phản Trảm (FlameShellExecute)', trigger: 'Bị đánh 2 lần liên tiếp · CD 22s', effect: '70 sát thương r≈12 + hất văng; quái Speed I (4 giây).' },
+                            { name: 'Mưa Vàng (MuaVang)', trigger: '~onTimer:160 · CD 16s', effect: '5 đợt, mỗi đợt 55 sát thương + Chậm II (4 giây).' },
+                            { name: 'Chảm Kích (ChamKich)', trigger: '~onAttack · CD 20s', effect: 'Đáp đất: 90 sát thương r≈10 + buồn nôn II + cháy.' },
+                            { name: 'Bộc Phá Vàng (BocPha)', trigger: '~onDeath', effect: '60 sát thương xuyên giáp r≈6 + mù + hất tung.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonMooshroom_T2',
+                        name: 'Ám Diệp Huyết Mầm',
+                        tier: 2,
+                        hp: 200,
+                        damage: 35,
+                        speed: 0.31,
+                        armor: 'Không giáp, miễn mũi tên, KB 100%',
+                        modifiers: 'PROJECTILE 0 (Miễn đạn) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)',
+                        kb: '100%',
+                        threat: 'Cực khó',
+                        score100: 93,
+                        image: 'images/Am_diep_huyet_mam.png',
+                        role: 'Kiểm soát vùng — triệu mini, khiên 40 HP, bùng phát 3 sóng 70/60/50',
+                        skills: [
+                            { name: 'Nổ Bào Tử (OnDamagedSporeburst)', trigger: '~onDamaged · CD 12s', effect: 'r≈8: buồn nôn + độc (4 giây); hồi 10 máu.' },
+                            { name: 'Khiên + Tăng tốc (ShieldSurge)', trigger: '~onTimer:100 · CD 15s', effect: 'Khiên 40 HP + Speed II (3 giây).' },
+                            { name: 'Bào Tử Lan Rộng (MyceliumSlow)', trigger: '~onTimer:120 · CD 10s', effect: 'r≈20: Chậm II (6 giây) toàn bộ người chơi.' },
+                            { name: 'Đại Dịch (DaiDich)', trigger: '~onTimer:120 · CD 90s', effect: 'Triệu 3 Bò Nấm Mini; bản thân lùi kite.' },
+                            { name: 'Lốc Bào Tử (LocBaoTu)', trigger: '~onTimer:160 · CD 20s (máu < 60%)', effect: 'r≈7 trong 7 giây: mỗi giây 20 sát thương xuyên giáp + Yếu I.' },
+                            { name: 'Bùng Phát (BungPhat)', trigger: '~onTimer:200 · CD 30s', effect: '3 sóng: 70 / 60 / 50 dmg; combo 3 sóng → bay + choáng.' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonMooshroomMini_T2',
+                                name: 'Bò Nấm Mini',
+                                hp: 100,
+                                damage: 30,
+                                speed: 0.34,
+                                role: 'Lực lượng tự sát — nổ chết 70 dmg',
+                                skills: [
+                                    { name: 'Tự Sát Tiễn Biệt', trigger: '~onDeath', effect: 'Nổ r≈5: 70 sát thương + Wither I (4 giây).' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonWarden_T2',
+                        name: 'U Minh Giám Quân',
+                        tier: 2,
+                        hp: 200,
+                        damage: 30,
+                        speed: 0.32,
+                        armor: 'Không giáp vật lý, KB 100%',
+                        modifiers: 'ENTITY_ATTACK 0.35 (Chỉ nhận 35% dame tay)',
+                        kb: '100%',
+                        threat: 'Cực khó',
+                        score100: 77,
+                        image: 'images/U_minh_giam_quan.png',
+                        role: 'Boss zone — hút máu 4/đòn, sao 55/s, nổ hư không',
+                        skills: [
+                            { name: 'Huyết Dưỡng Hắc (Lifesteal)', trigger: '~onAttack trúng player', effect: 'Hồi 4 máu mỗi đòn tay.' },
+                            { name: 'Hắc Địa Chấn (DarkShockwave)', trigger: '~onDamaged · CD 12s', effect: 'r≈6: 50 sát thương + hất văng + mù 3 giây + choáng ~2 giây.' },
+                            { name: 'Sao Tinh Thể (SaoTinhThe)', trigger: '~onTimer:180 · CD 18s', effect: 'Vùng r≈8 quanh từng player 6 giây: mỗi giây 55 sát thương + Yếu I.' },
+                            { name: 'Hư Không (HuKhong)', trigger: '~onTimer:220 · CD 23s', effect: 'Hất r≈18, rồi ~6 giây nổ ngẫu nhiên: mỗi điểm 10 sát thương xuyên giáp.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonSkeleton_T2',
+                        name: 'Băng Lam Kỵ Cốt',
+                        tier: 2,
+                        hp: 100,
+                        damage: 30,
+                        speed: 0.32,
+                        armor: 'Diamond Full · Bảo Vệ IV (mũ III) + Gai II · Cung Power V + Flame + Punch II',
+                        modifiers: null,
+                        kb: '0%',
+                        threat: 'Rất khó',
+                        score100: 53,
+                        image: 'images/Bang_lam_cot.png',
+                        role: 'Hỏa lực băng tuyết — mưa tên dày, hỏa tiễn 40 xuyên giáp, phân thân theo pha',
+                        skills: [
+                            { name: 'Ba Mũi Bồi (TripleArrow)', trigger: '~onAttack · CD 10s', effect: '3 mũi tên skill (60 / 30 / 60 dmg) + Yếu I.' },
+                            { name: 'Khiên Xương (BoneShield)', trigger: '~onDamaged · CD 20s', effect: 'Khiên 10 HP + Levitation III (2 giây) + rơi chậm.' },
+                            { name: 'Phân Thân Theo Pha (PhaseSummon)', trigger: 'Ngưỡng máu · CD 60s', effect: 'Triệu 1 Cốt Kỵ Đột Kích (tối đa nhiều lần).' },
+                            { name: 'Mưa Tên Băng Lam (MuaTen)', trigger: '~onAttack · CD 20s', effect: '~4 giây volley dày — mũi tên skill 30–40 + Chậm II.' },
+                            { name: 'Hỏa Tiễn (HoaTien)', trigger: '~onDamaged · CD 15s', effect: 'Cột lửa r≈6: 40 sát thương xuyên giáp + cháy 7,5 giây.' }
+                        ],
+                        minions: [
+                            {
+                                id: 'DungeonSkeletonMini_T2',
+                                name: 'Cốt Kỵ Đột Kích',
+                                hp: 100,
+                                damage: 22,
+                                speed: 0.48,
+                                role: 'Kỵ binh siêu tốc — Speed II spawn, hất văng 1 lần (CD 60s)',
+                                skills: [
+                                    { name: 'Đột Kích Hất Tung', trigger: '~onAttack (CD 60s)', effect: 'Hất văng cực mạnh (velocityY 15).' }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        id: 'DungeonWitherSkeleton_T2',
+                        name: 'Hủy Diệt Hắc Cốt',
+                        tier: 2,
+                        hp: 100,
+                        damage: 20,
+                        speed: 0.35,
+                        armor: 'Netherite Full · Bảo Vệ IV + Gai II · Rìu Netherite Sắc bén V',
+                        modifiers: null,
+                        kb: '50%',
+                        threat: 'Rất khó',
+                        score100: 74,
+                        image: 'images/Huy_diet_hac_cot.png',
+                        role: 'Assassin — hoán đổi, 10 skull barrage, hắc cầu 80 xuyên giáp',
+                        skills: [
+                            { name: 'Vùng Neo (AnchorZone)', trigger: '~onTimer:130 · CD 12s', effect: 'r≈8: không nhảy + Chậm IV (2 giây).' },
+                            { name: 'Xích Đen (ChainSwap)', trigger: '~onTimer:150 · CD 12s', effect: 'Đổi chỗ + 25 sát thương xuyên giáp + mù 3 giây; hồi 20 máu.' },
+                            { name: 'Nổ Cận Chiến (MeleeBurst)', trigger: '~onAttack · CD 20s', effect: '60 sát thương + hất tung; quái Speed I (4 giây).' },
+                            { name: 'Đầu Lâu Nguyền Rủa (SkullBarrage)', trigger: '~onTimer:170 · CD 22s', effect: 'Bắn 10 đầu lâu wither (né được).' },
+                            { name: 'Hắc Cầu Hủy Diệt (HacCau)', trigger: '~onTimer:210 · CD 25s', effect: 'Gồng 4 giây rồi đập: 80 sát thương xuyên giáp + hất + rơi chậm.' },
+                            { name: 'Bụi Tử Vong (DeathDust)', trigger: '~onDeath', effect: 'r≈14 trong ~6 giây: Chậm III + Wither + 20 dmg/nhịp.' }
+                        ],
+                        minions: []
+                    },
+                    {
+                        id: 'DungeonBlaze_T2',
+                        name: 'Ác Quỷ Lửa',
+                        tier: 2,
+                        hp: 150,
+                        damage: 22,
+                        speed: 0.30,
+                        armor: 'Miễn lửa + cháy, kháng đánh tay và đạn cao',
+                        modifiers: 'ENTITY_ATTACK 0.25 (25% dame tay) · PROJECTILE 0.2 (20% dame bắn) · FIRE 0 · FIRE_TICK 0',
+                        kb: '60%',
+                        threat: 'Cực khó',
+                        score100: 64,
+                        image: 'images/Ac_quy_lua.png',
+                        role: 'Pháp sư dung nham — phun lửa homing, thiên thạch 70, cột lava 50',
+                        skills: [
+                            { name: 'Áo Lửa Phản Kích (BurnAura)', trigger: '~onDamaged', effect: 'Mọi người r≈5 cháy 5 giây.' },
+                            { name: 'Trứng Lửa (EggFireRing)', trigger: '~onTimer:120 · CD 13s', effect: 'Kén lửa 4 giây — đánh vào: 50 sát thương + hất + Chậm III + cháy.' },
+                            { name: 'Phun Lửa (PhunLua)', trigger: '~onTimer:120 · CD 20s', effect: 'Homing missile 4 giây: mỗi tia 12 sát thương xuyên giáp + cháy.' },
+                            { name: 'Thiên Thạch (ThienThach)', trigger: '~onTimer:160 · CD 25s', effect: '70 sát thương + mù 2 giây + Yếu II (5 giây) + hất văng mạnh.' },
+                            { name: 'Cột Dung Nham (CotLava)', trigger: '~onTimer:240 · CD 20s', effect: '3 cột lava (cách 3 giây): mỗi cột 50 sát thương + cháy 3 giây, r≈2 block.' }
+                        ],
+                        minions: []
+                    }
+                ],
+
+                // Search & Filter Computed Getters
+                get filteredMobs() {
+                    return this.mobs.filter(mob => {
+                        // Filter by Level Tier
+                        if (this.selectedTier !== 'all' && mob.tier !== Number(this.selectedTier)) {
+                            return false;
+                        }
+
+                        // Filter by Name, ID, or Role
+                        const matchesSearch = mob.name.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                                              mob.id.toLowerCase().includes(this.searchQuery.toLowerCase()) || 
+                                              mob.role.toLowerCase().includes(this.searchQuery.toLowerCase());
+                        
+                        // Filter by Threat level
+                        let matchesThreat = true;
+                        if (this.selectedThreat !== 'All') {
+                            if (this.selectedThreat === 'Trung bình') {
+                                matchesThreat = mob.threat.includes('Trung bình') || mob.threat.includes('Yếu');
+                            } else {
+                                matchesThreat = mob.threat === this.selectedThreat;
+                            }
+                        }
+                        
+                        return matchesSearch && matchesThreat;
+                    });
+                },
+
+                // Sorted Mobs Computed Getter
+                get sortedMobs() {
+                    return [...this.filteredMobs].sort((a, b) => {
+                        let valA = a[this.sortByColumn];
+                        let valB = b[this.sortByColumn];
+
+                        if (typeof valA === 'string' && !isNaN(valA)) valA = Number(valA);
+                        if (typeof valB === 'string' && !isNaN(valB)) valB = Number(valB);
+
+                        if (valA < valB) return this.sortAscending ? -1 : 1;
+                        if (valA > valB) return this.sortAscending ? 1 : -1;
+                        return 0;
+                    });
+                },
+
+                // Sorting Functionality
+                sortBy(column) {
+                    if (this.sortByColumn === column) {
+                        this.sortAscending = !this.sortAscending;
+                    } else {
+                        this.sortByColumn = column;
+                        this.sortAscending = true;
+                    }
+                },
+
+                // Skill display helpers
+                parseSkillName(name) {
+                    if (!name) return { title: '', code: null };
+                    const match = name.match(/^(.+?)\s*\(([^)]+)\)\s*$/);
+                    if (match) return { title: match[1].trim(), code: null };
+                    return { title: name, code: null };
+                },
+
+                extractCooldown(trigger) {
+                    if (!trigger) return null;
+                    const m = trigger.match(/CD\s*([\d.,]+\s*(?:giây|s)?)/i);
+                    return m ? m[1].trim() : null;
+                },
+
+                getSkillCategory(skill) {
+                    const blob = ((skill.trigger || '') + ' ' + (skill.effect || '')).toLowerCase();
+                    if (blob.includes('ondeath') || blob.includes('khi chết') || blob.includes('~ondeath')) return 'death';
+                    if (/hồi\s*\d+\s*máu/i.test(skill.effect || '')) return 'heal';
+                    if (/triệu|phân thân|rãi\s*\d|sinh\s+\d/i.test(blob)) return 'summon';
+                    if (/\d+\s*sát thương|\d+\s*dmg/i.test(skill.effect || '') && !/hồi\s*\d+\s*máu/i.test(skill.effect || '')) return 'damage';
+                    if (/chậm|mù|choáng|wither|yếu|buồn nôn|đói|hất|levitation|kéo/i.test(blob)) return 'debuff';
+                    if (/tăng tốc|sức mạnh|khiên|kháng|speed|strength/i.test(blob)) return 'buff';
+                    return 'utility';
+                },
+
+                getSkillCategoryLabel(cat) {
+                    const labels = { damage: 'Sát thương', heal: 'Hồi phục', debuff: 'Khống chế / Debuff', summon: 'Triệu hồi', death: 'Khi chết', buff: 'Buff / Phòng thủ', utility: 'Hiệu ứng vùng' };
+                    return labels[cat] || 'Kỹ năng';
+                },
+
+                getSkillCategoryStyle(cat) {
+                    const styles = {
+                        damage:  { accent: 'bg-rose-500',    cardBg: 'from-rose-950/25 to-slate-950/40',    cardBorder: 'hover:border-rose-800/50',    indexBox: 'bg-rose-950/80 border-rose-800/60 text-rose-300',    icon: 'fa-burst',           iconColor: 'text-rose-400',    labelColor: 'text-rose-400' },
+                        heal:    { accent: 'bg-emerald-500', cardBg: 'from-emerald-950/20 to-slate-950/40', cardBorder: 'hover:border-emerald-800/50', indexBox: 'bg-emerald-950/80 border-emerald-800/60 text-emerald-300', icon: 'fa-heart-pulse', iconColor: 'text-emerald-400', labelColor: 'text-emerald-400' },
+                        debuff:  { accent: 'bg-purple-500',  cardBg: 'from-purple-950/20 to-slate-950/40',  cardBorder: 'hover:border-purple-800/50',  indexBox: 'bg-purple-950/80 border-purple-800/60 text-purple-300',  icon: 'fa-eye-low-vision', iconColor: 'text-purple-400', labelColor: 'text-purple-400' },
+                        summon:  { accent: 'bg-amber-500',   cardBg: 'from-amber-950/20 to-slate-950/40',   cardBorder: 'hover:border-amber-800/50',   indexBox: 'bg-amber-950/80 border-amber-800/60 text-amber-300',   icon: 'fa-ghost',          iconColor: 'text-amber-400',   labelColor: 'text-amber-400' },
+                        death:   { accent: 'bg-rose-600',    cardBg: 'from-rose-950/30 to-slate-950/40',    cardBorder: 'hover:border-rose-700/50',    indexBox: 'bg-rose-950 border-rose-700 text-rose-200',              icon: 'fa-skull',          iconColor: 'text-rose-300',    labelColor: 'text-rose-300' },
+                        buff:    { accent: 'bg-cyan-500',    cardBg: 'from-cyan-950/20 to-slate-950/40',    cardBorder: 'hover:border-cyan-800/50',    indexBox: 'bg-cyan-950/80 border-cyan-800/60 text-cyan-300',      icon: 'fa-shield-halved',  iconColor: 'text-cyan-400',    labelColor: 'text-cyan-400' },
+                        utility: { accent: 'bg-indigo-500',  cardBg: 'from-indigo-950/20 to-slate-950/40', cardBorder: 'hover:border-indigo-700/50',  indexBox: 'bg-indigo-950/80 border-indigo-800/60 text-indigo-300', icon: 'fa-wand-magic-sparkles', iconColor: 'text-indigo-400', labelColor: 'text-indigo-400' }
+                    };
+                    return styles[cat] || styles.utility;
+                },
+
+                getSkillTriggerMeta(trigger) {
+                    const t = (trigger || '').toLowerCase();
+                    if (t.includes('ondeath') || t.includes('khi chết')) return { icon: 'fa-skull', label: 'Khi chết' };
+                    if (t.includes('onplayerkill') || t.includes('giết player') || t.includes('giết người')) return { icon: 'fa-user-slash', label: 'Hạ người chơi' };
+                    if (t.includes('onspawn') || t.includes('khi spawn')) return { icon: 'fa-star', label: 'Khi xuất hiện' };
+                    if (t.includes('onshoot') || t.includes('~onshoot')) return { icon: 'fa-bullseye', label: 'Khi bắn' };
+                    if (t.includes('liên tiếp')) return { icon: 'fa-bolt', label: 'Combo hit' };
+                    if (t.includes('onattack') || t.includes('trúng player') || t.includes('cắn') || t.includes('đòn tấn')) return { icon: 'fa-sword', label: 'Đòn tấn công' };
+                    if (t.includes('ondamaged') || t.includes('bị đánh') || t.includes('bị player')) return { icon: 'fa-shield-halved', label: 'Khi bị đánh' };
+                    if (t.includes('máu <') || t.includes('dưới 50') || t.includes('dưới 60') || t.includes('dưới 40') || t.includes('ngưỡng')) return { icon: 'fa-heart-crack', label: 'Ngưỡng máu' };
+                    if (t.includes('ontimer') || t.includes('mỗi ~') || t.includes('mỗi') || t.includes('liên tục')) {
+                        const mViet = (trigger || '').match(/mỗi\s*~?\s*([\d,]+(?:\.\d+)?)\s*giây/i);
+                        if (mViet) return { icon: 'fa-clock', label: 'Mỗi ~' + mViet[1].replace(',', '.') + 's' };
+                        const mTimer = (trigger || '').match(/~?onTimer:(\d+)/i);
+                        if (mTimer) {
+                            const sec = Math.round(parseInt(mTimer[1]) / 20 * 10) / 10;
+                            return { icon: 'fa-clock', label: 'Mỗi ~' + sec + 's' };
+                        }
+                        return { icon: 'fa-clock', label: 'Theo thời gian' };
+                    }
+                    return { icon: 'fa-bolt', label: 'Kích hoạt' };
+                },
+
+                getSkillTriggerChipClass(trigger) {
+                    const t = (trigger || '').toLowerCase();
+                    if (t.includes('ondeath') || t.includes('khi chết')) return 'text-rose-300 border-rose-900/60 bg-rose-950/40';
+                    if (t.includes('onshoot') || t.includes('~onshoot')) return 'text-amber-300 border-amber-900/60 bg-amber-950/40';
+                    if (t.includes('liên tiếp')) return 'text-yellow-300 border-yellow-900/60 bg-yellow-950/40';
+                    if (t.includes('onattack') || t.includes('trúng player') || t.includes('cắn')) return 'text-red-300 border-red-900/60 bg-red-950/40';
+                    if (t.includes('ondamaged') || t.includes('bị đánh')) return 'text-orange-300 border-orange-900/60 bg-orange-950/40';
+                    if (t.includes('ontimer') || t.includes('mỗi')) return 'text-cyan-300 border-cyan-900/60 bg-cyan-950/40';
+                    if (t.includes('máu <') || t.includes('ngưỡng')) return 'text-rose-200 border-rose-800/60 bg-rose-950/50';
+                    return 'text-indigo-300 border-indigo-900/60 bg-indigo-950/40';
+                },
+
+                extractSkillChips(skill) {
+                    const chips = [];
+                    const effect = skill.effect || '';
+                    const cd = this.extractCooldown(skill.trigger);
+                    if (cd) chips.push({ type: 'cd', text: 'CD ' + cd, class: 'bg-amber-950/50 text-amber-300 border-amber-900/60', icon: 'fa-hourglass-half' });
+
+                    const heal = effect.match(/hồi\s*(\d+)\s*máu/i);
+                    if (heal) chips.push({ type: 'heal', text: '+' + heal[1] + ' HP', class: 'bg-emerald-950/50 text-emerald-300 border-emerald-900/60', icon: 'fa-heart' });
+
+                    const dmg = effect.match(/(\d+(?:\s*\/\s*\d+)+|\d+)\s*sát thương/i);
+                    if (dmg && !heal) chips.push({ type: 'dmg', text: dmg[0].replace(/\s*sát thương/i, ' dmg'), class: 'bg-rose-950/50 text-rose-300 border-rose-900/60', icon: 'fa-fire' });
+
+                    const radius = effect.match(/(?:r≈|bán kính\s*~?|~)\s*(\d+)\s*block/i);
+                    if (radius) chips.push({ type: 'range', text: 'R ' + radius[1] + ' block', class: 'bg-sky-950/50 text-sky-300 border-sky-900/60', icon: 'fa-circle-dot' });
+
+                    return chips;
+                },
+
+                highlightEffectText(effect) {
+                    if (!effect) return '';
+                    const escaped = effect
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;');
+                    return escaped
+                        .replace(/(\d+(?:\s*\/\s*\d+)*)\s*sát thương/gi, '<strong class="hl-dmg">$1 sát thương</strong>')
+                        .replace(/hồi\s*(\d+)\s*máu/gi, '<strong class="hl-heal">hồi $1 máu</strong>')
+                        .replace(/(Chậm\s*[IVX\d]+|Wither\s*[IVX\d]*|Yếu\s*[đuối\s]*[IVX\d]*|choáng|mù\s*\d+\s*giây|buồn nôn\s*[IVX\d]*|Đói\s*[IVX\d]*|hất văng|xuyên giáp)/gi, '<strong class="hl-debuff">$1</strong>')
+                        .replace(/(r≈\s*\d+|~?\d+\s*block|bán kính\s*~?\d+)/gi, '<strong class="hl-range">$1</strong>');
+                },
+
+                getHpBarPercent(hp) {
+                    const max = Math.max(...this.mobs.map(m => m.hp), 210);
+                    return Math.min(100, Math.round((hp / max) * 100));
+                },
+
+                getMobNameStyle(mob) {
+                    const fallback = mob?.tier === 1
+                        ? { icon: 'fa-dragon', iconBox: 'bg-cyan-950/70 border-cyan-700/50 text-cyan-300', textGradient: 'bg-gradient-to-r from-cyan-100 via-sky-200 to-cyan-300' }
+                        : { icon: 'fa-dragon', iconBox: 'bg-rose-950/70 border-rose-700/50 text-rose-300', textGradient: 'bg-gradient-to-r from-rose-100 via-amber-200 to-rose-300' };
+                    const map = {
+                        DungeonDrowned_T1:      { icon: 'fa-water',              iconBox: 'bg-cyan-950/80 border-cyan-600/50 text-cyan-300',       textGradient: 'bg-gradient-to-r from-cyan-200 via-sky-300 to-blue-400' },
+                        DungeonStray_T1:        { icon: 'fa-snowflake',          iconBox: 'bg-sky-950/80 border-sky-500/50 text-sky-200',           textGradient: 'bg-gradient-to-r from-slate-100 via-sky-200 to-cyan-300' },
+                        DungeonSkeleton_T1:     { icon: 'fa-bolt',               iconBox: 'bg-yellow-950/80 border-yellow-500/50 text-yellow-300',  textGradient: 'bg-gradient-to-r from-yellow-100 via-amber-200 to-yellow-400' },
+                        DungeonZombie_T1:       { icon: 'fa-skull',              iconBox: 'bg-lime-950/80 border-lime-700/50 text-lime-300',       textGradient: 'bg-gradient-to-r from-lime-200 via-emerald-200 to-green-400' },
+                        DungeonCreeper_T1:      { icon: 'fa-bomb',               iconBox: 'bg-green-950/80 border-green-500/50 text-green-300',     textGradient: 'bg-gradient-to-r from-green-200 via-lime-300 to-emerald-400' },
+                        DungeonCaveSpider_T1:   { icon: 'fa-spider',             iconBox: 'bg-purple-950/80 border-purple-600/50 text-purple-300',   textGradient: 'bg-gradient-to-r from-purple-200 via-violet-300 to-fuchsia-400' },
+                        DungeonHusk_T1:         { icon: 'fa-sun',                iconBox: 'bg-amber-950/80 border-amber-600/50 text-amber-300',     textGradient: 'bg-gradient-to-r from-amber-100 via-orange-200 to-yellow-400' },
+                        DungeonShulker_T1:      { icon: 'fa-cube',               iconBox: 'bg-indigo-950/80 border-indigo-500/50 text-indigo-300',   textGradient: 'bg-gradient-to-r from-indigo-200 via-violet-300 to-purple-400' },
+                        DungeonWitch_T1:        { icon: 'fa-flask',              iconBox: 'bg-fuchsia-950/80 border-fuchsia-600/50 text-fuchsia-300', textGradient: 'bg-gradient-to-r from-fuchsia-200 via-purple-300 to-violet-400' },
+                        DungeonMagmaCube_T1:    { icon: 'fa-fire',               iconBox: 'bg-orange-950/80 border-orange-500/50 text-orange-300',    textGradient: 'bg-gradient-to-r from-orange-200 via-red-300 to-amber-400' },
+                        DungeonPiglin_T2:       { icon: 'fa-coins',              iconBox: 'bg-yellow-950/80 border-yellow-600/50 text-yellow-300',  textGradient: 'bg-gradient-to-r from-yellow-200 via-amber-300 to-orange-400' },
+                        DungeonPillager_T2:     { icon: 'fa-crosshairs',         iconBox: 'bg-red-950/80 border-red-600/50 text-red-300',           textGradient: 'bg-gradient-to-r from-red-200 via-rose-300 to-orange-400' },
+                        DungeonZPiglin_T2:      { icon: 'fa-axe',                iconBox: 'bg-rose-950/80 border-rose-600/50 text-rose-300',        textGradient: 'bg-gradient-to-r from-rose-200 via-red-300 to-amber-400' },
+                        DungeonMooshroom_T2:    { icon: 'fa-circle-radiation',   iconBox: 'bg-red-950/80 border-red-700/50 text-red-300',            textGradient: 'bg-gradient-to-r from-red-200 via-rose-300 to-pink-400' },
+                        DungeonWarden_T2:       { icon: 'fa-eye',                iconBox: 'bg-teal-950/80 border-teal-600/50 text-teal-300',         textGradient: 'bg-gradient-to-r from-teal-200 via-cyan-300 to-slate-300' },
+                        DungeonSkeleton_T2:     { icon: 'fa-bullseye',           iconBox: 'bg-blue-950/80 border-blue-500/50 text-blue-300',         textGradient: 'bg-gradient-to-r from-blue-200 via-cyan-300 to-indigo-400' },
+                        DungeonWitherSkeleton_T2: { icon: 'fa-skull-crossbones', iconBox: 'bg-slate-900/90 border-slate-500/50 text-slate-300',      textGradient: 'bg-gradient-to-r from-slate-200 via-zinc-300 to-stone-400' },
+                        DungeonBlaze_T2:        { icon: 'fa-fire-flame-curved',  iconBox: 'bg-orange-950/80 border-orange-600/50 text-orange-300',  textGradient: 'bg-gradient-to-r from-orange-200 via-amber-300 to-yellow-400' }
+                    };
+                    return map[mob?.id] || fallback;
+                },
+
+                getMobThreatScore(mob) {
+                    if (!mob) return 0;
+                    return mob.score100 ?? 50;
+                },
+
+                getMobThreatScorePercent(mob) {
+                    if (!mob) return 0;
+                    return Math.min(100, mob.score100 ?? 50);
+                },
+
+                parseDamageModifiers(modifiersStr) {
+                    if (!modifiersStr) return [];
+                    const labels = {
+                        ENTITY_ATTACK: 'Tấn công cận chiến',
+                        PROJECTILE: 'Đạn & tên bắn',
+                        FIRE: 'Sát thương lửa',
+                        FIRE_TICK: 'Cháy (mỗi tick)',
+                        FALL: 'Rơi từ cao',
+                        MAGIC: 'Phép thuật',
+                        EXPLOSION: 'Sát thương nổ'
+                    };
+                    const icons = {
+                        ENTITY_ATTACK: 'fa-hand-fist',
+                        PROJECTILE: 'fa-bullseye',
+                        FIRE: 'fa-fire',
+                        FIRE_TICK: 'fa-fire-flame-curved',
+                        FALL: 'fa-person-falling',
+                        MAGIC: 'fa-wand-magic-sparkles',
+                        EXPLOSION: 'fa-bomb'
+                    };
+                    return modifiersStr.split('·').map(s => s.trim()).filter(Boolean).map(part => {
+                        const codeMatch = part.match(/^(ENTITY_ATTACK|PROJECTILE|FIRE_TICK|FIRE|FALL|MAGIC|EXPLOSION)\s*([\d.]+)/i);
+                        if (codeMatch) {
+                            const key = codeMatch[1].toUpperCase();
+                            const val = parseFloat(codeMatch[2]);
+                            const label = labels[key] || key;
+                            const icon = icons[key] || 'fa-shield-halved';
+                            if (val === 0) {
+                                return { label, display: 'Miễn nhiễm 100%', type: 'immune', icon, barPercent: 0 };
+                            }
+                            const pct = Math.round(val * 100);
+                            return { label, display: 'Chỉ nhận ' + pct + '% sát thương', type: 'resist', icon, barPercent: pct };
+                        }
+                        const vietMatch = part.match(/\(([^)]+)\)/);
+                        if (vietMatch) {
+                            return { label: vietMatch[1], display: vietMatch[1], type: 'note', icon: 'fa-shield-halved' };
+                        }
+                        return { label: part, display: part, type: 'note', icon: 'fa-shield-halved' };
+                    });
+                },
+
+                parseArmorLoadout(armorStr) {
+                    if (!armorStr) return [];
+                    const iconFor = (text) => {
+                        const t = text.toLowerCase();
+                        if (/nỏ|cung|tên|bow|crossbow/.test(t)) return 'fa-crosshairs';
+                        if (/kiếm|sword|rìu|axe/.test(t)) return 'fa-sword';
+                        if (/giáp|armor|netherite|diamond|sắt|vàng|bảo vệ|gai/.test(t)) return 'fa-shield-halved';
+                        if (/khiên|shield/.test(t)) return 'fa-shield';
+                        if (/đinh ba|trident/.test(t)) return 'fa-trident';
+                        if (/miễn|kháng|vỏ|kb/.test(t)) return 'fa-shield-virus';
+                        return 'fa-vest';
+                    };
+                    return armorStr.split(/[·,]/).map(s => s.trim()).filter(Boolean).map(text => ({
+                        text,
+                        icon: iconFor(text)
+                    }));
+                },
+
+                formatDefenseSummary(mob) {
+                    if (!mob) return '';
+                    const parts = [];
+                    const gears = this.parseArmorLoadout(mob.armor);
+                    if (gears.length) parts.push(gears.map(g => g.text).join(' · '));
+                    const mods = this.parseDamageModifiers(mob.modifiers);
+                    if (mods.length) parts.push(mods.map(m => m.label + ': ' + m.display).join(' · '));
+                    return parts.join(' — ') || 'Không ghi nhận';
+                },
+
+                getAlertCardClass(color) {
+                    const map = {
+                        purple: 'border-purple-500 bg-purple-950/15',
+                        red: 'border-red-500 bg-red-950/15',
+                        amber: 'border-amber-500 bg-amber-950/15',
+                        sky: 'border-sky-500 bg-sky-950/15',
+                        orange: 'border-orange-500 bg-orange-950/15',
+                        indigo: 'border-indigo-500 bg-indigo-950/15'
+                    };
+                    return map[color] || 'border-indigo-500 bg-indigo-950/15';
+                },
+
+                // Get Threat Style CSS Classes
+                getThreatClass(threat) {
+                    switch (threat) {
+                        case 'Cực khó':
+                            return 'bg-red-950/60 text-red-400 border-red-800/80';
+                        case 'Rất khó':
+                            return 'bg-orange-950/60 text-orange-400 border-orange-850';
+                        case 'Cao':
+                            return 'bg-amber-950/60 text-amber-400 border-amber-850';
+                        case 'Trung bình':
+                        default:
+                            return 'bg-emerald-950/60 text-emerald-400 border-emerald-850';
+                    }
+                },
+
+                // Modal triggers
+                openMobModal(mob) {
+                    this.activeMob = mob;
+                    this.isModalOpen = true;
+                },
+
+                closeModal() {
+                    this.isModalOpen = false;
+                    this.activeMob = null;
+                },
+
+                // Prompt user to paste a new image link manually
+                promptImageEdit(mob) {
+                    const currentLink = mob.image || '';
+                    const newLink = window.prompt(`Dán URL hình ảnh mới cho quái vật "${mob.name}":`, currentLink);
+                    if (newLink !== null) {
+                        mob.image = newLink.trim();
+                        // Also sync activeMob if currently showing in modal
+                        if (this.activeMob && this.activeMob.id === mob.id) {
+                            this.activeMob.image = mob.image;
+                        }
+                    }
+                },
+
+                // Combat Simulator helper functions
+                toggleSimulatorMob(mob) {
+                    const index = this.selectedSimulatorMobs.findIndex(m => m.id === mob.id);
+                    if (index > -1) {
+                        this.selectedSimulatorMobs.splice(index, 1);
+                    } else {
+                        this.selectedSimulatorMobs.push(mob);
+                    }
+                },
+
+                isMobSelected(id) {
+                    return this.selectedSimulatorMobs.some(m => m.id === id);
+                },
+
+                getSimulatedThreatPercentage() {
+                    let totalScore = 0;
+                    this.selectedSimulatorMobs.forEach(m => {
+                        if (m.threat === 'Cực khó') totalScore += 5;
+                        else if (m.threat === 'Rất khó') totalScore += 3.8;
+                        else if (m.threat === 'Cao') totalScore += 2.5;
+                        else totalScore += 1.2;
+
+                        // Add threat multiplier for nested summons
+                        if (m.minions && m.minions.length > 0) {
+                            totalScore += (m.minions.length * 0.8);
+                        }
+                    });
+                    return Math.min(100, (totalScore / 13) * 100);
+                },
+
+                getSimulatedThreatLabel() {
+                    const percentage = this.getSimulatedThreatPercentage();
+                    if (percentage >= 85) return 'TỬ VỰC (VIÊN TIÊU)';
+                    if (percentage >= 60) return 'ĐẠI HUNG CẢNH';
+                    if (percentage >= 30) return 'THỬ THÁCH NẶNG';
+                    return 'AN TOÀN / VỪA SỨC';
+                },
+
+                getThreatBarColor() {
+                    const percentage = this.getSimulatedThreatPercentage();
+                    if (percentage >= 85) return 'bg-gradient-to-r from-red-600 to-rose-700';
+                    if (percentage >= 60) return 'bg-gradient-to-r from-orange-500 to-red-600';
+                    if (percentage >= 30) return 'bg-gradient-to-r from-yellow-500 to-orange-500';
+                    return 'bg-gradient-to-r from-green-500 to-yellow-500';
+                },
+
+                getThreatTextColor() {
+                    const percentage = this.getSimulatedThreatPercentage();
+                    if (percentage >= 85) return 'text-red-500 glow-red';
+                    if (percentage >= 60) return 'text-orange-500';
+                    if (percentage >= 30) return 'text-yellow-500';
+                    return 'text-green-400';
+                },
+
+                getActiveAlerts() {
+                    const alerts = [];
+                    const ids = this.selectedSimulatorMobs.map(m => m.id);
+
+                    // Check for poison and decay (Wither, Venom, Acid)
+                    if (ids.some(id => ['DungeonZombie_T1', 'DungeonCaveSpider_T1', 'DungeonWitherSkeleton_T2', 'DungeonMooshroom_T2'].includes(id))) {
+                        alerts.push({
+                            title: 'Nguy Cơ Nhiễm Thi Độc / Héo Úa Cực Đại',
+                            desc: 'Wither II (Cương Thi), độc Hiệm Tơ, Bụi Tử Vong Hắc Cốt, hoặc Bò Nấm Mini nổ chết 70 dmg + Wither. Cần thanh tẩy hoặc lùi khỏi vùng chết.',
+                            icon: 'fa-solid fa-biohazard',
+                            color: 'purple'
+                        });
+                    }
+
+                    // Check for flame shockwaves and lava columns
+                    if (ids.some(id => ['DungeonPiglin_T2', 'DungeonHusk_T1', 'DungeonBlaze_T2', 'DungeonPillager_T2'].includes(id))) {
+                        alerts.push({
+                            title: 'Sát Thương Cháy & Hỏa Ngục T2',
+                            desc: 'Hỏa Kích 80, Cuồng Phong 70, Thiên Thạch 70, cột lava 50 — nhiều hit xuyên giáp. Mang kháng hỏa hoặc che chắn.',
+                            icon: 'fa-solid fa-fire-flame-curved',
+                            color: 'red'
+                        });
+                    }
+
+                    // Check for lightning overcharge
+                    if (ids.includes('DungeonSkeleton_T1')) {
+                        alerts.push({
+                            title: 'Điện Lực Quá Tải (Bão Điện Từ)',
+                            desc: 'Bão Điện Từ của Thành Vệ gây tới 30 sát thương/giây liên tục trong 7 giây. Không được đứng cụm cận chiến lâu khi nó kích bão!',
+                            icon: 'fa-solid fa-bolt-lightning',
+                            color: 'amber'
+                        });
+                    }
+
+                    // Check for projectile immunities
+                    if (ids.some(id => ['DungeonStray_T1', 'DungeonMooshroom_T2', 'DungeonPillager_T2', 'DungeonCreeper_T1', 'DungeonWitch_T1'].includes(id))) {
+                        alerts.push({
+                            title: 'Trận Doanh Miễn Đạn Tên (Kháng Cung Khủng)',
+                            desc: 'PROJECTILE = 0 hoặc cực thấp (Yểm Sư 12%). Cung thường gần như vô hiệu — chuyển đánh tay hoặc phép.',
+                            icon: 'fa-solid fa-shield-halved',
+                            color: 'sky'
+                        });
+                    }
+
+                    // Warden zone damage
+                    if (ids.includes('DungeonWarden_T2')) {
+                        alerts.push({
+                            title: 'U Minh — Sao Tinh Thể 55/s',
+                            desc: 'Sao Tinh Thể gây ~55 dmg/giây nếu đứng yên trong vùng 6 giây. Hư Không hất văng r≈18 rồi nổ xuyên giáp liên tiếp.',
+                            icon: 'fa-solid fa-meteor',
+                            color: 'indigo'
+                        });
+                    }
+
+                    // Check for slow trap / vortex engulf
+                    if (ids.includes('DungeonMagmaCube_T1') || ids.includes('DungeonHusk_T1')) {
+                        alerts.push({
+                            title: 'Bẫy Nuốt Chửng & Cát Lún Khóa Chân',
+                            desc: 'Nham Ma dập Nuốt Chửng gây sát thương 0.25s một lần cực rát phối hợp với cát lún của Sa Mộ Khô Hồn sẽ khóa cứng vĩnh viễn vị trí. Giữ khoảng cách khi di chuyển!',
+                            icon: 'fa-solid fa-person-falling-burst',
+                            color: 'orange'
+                        });
+                    }
+
+                    return alerts;
+                },
+
+                getDynamicStrategy() {
+                    const ids = this.selectedSimulatorMobs.map(m => m.id);
+                    if (ids.length === 0) return '';
+
+                    if (ids.includes('DungeonMagmaCube_T1')) {
+                        return 'Đối phó Nham Ma Nguyên Hỏa cần tránh hành lang chật hẹp, tránh đòn Nuốt Chửng bằng cách giữ khoảng cách, sau khi diệt xong Slime lớn phải nhanh chóng dọn sạch các phân tách nhỏ tránh bị cản đường.';
+                    }
+
+                    if (ids.includes('DungeonShulker_T1') || ids.includes('DungeonPillager_T2')) {
+                        return 'Giới Hạp (đạn 23 + barrage 35×10) hoặc Thập Tự Hỏa Tố (nỏ 100 base, Hỏa Kích 80): burst tầm xa cực lớn. Tiếp cận nhanh hoặc block, ưu tiên dọn mini Shulker / Kẻ Biện Hộ.';
+                    }
+
+                    if (ids.includes('DungeonWitch_T1')) {
+                        return 'Yểm Sư (160 HP) giật lùi + 3 Sói (110 HP, Str II). Focus witch trước PainLink (4×30 sét).';
+                    }
+
+                    if (ids.includes('DungeonMooshroom_T2')) {
+                        return 'Ám Diệp Huyết Mầm: miễn đạn, Bùng Phát 70/60/50 ba sóng. Dọn Bò Nấm Mini trước (nổ chết 70).';
+                    }
+
+                    return 'Sử dụng các khoảng không rộng để thả diều quái vật. Ưu tiên tập trung hỏa lực phá vỡ các đệ phụ (minions) được triệu hồi của quái chính nhằm loại bỏ bớt nguồn debuff choáng, làm chậm trước khi trực tiếp dồn damage kết liễu quái chính.';
+                }
+            };
+        }
+    </script>
+</body>
+</html>
