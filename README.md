@@ -1,14 +1,6 @@
-# Sugeon Dungeon — Điển Tịch Hầm Ngục Tối
+# SugeonDungeon · Điển tịch hầm ngục
 
-Wiki tra cứu quái dungeon T1/T2 cho server Minecraft.
+Trang tra cứu quái dungeon T1/T2 cho **Sugeon Area**.
 
-## GitHub Pages
-
-Site public tại: **https://khainhan1606.github.io/SugeonDungeon/**
-
-(Sau khi bật Pages trong Settings → Pages → branch `main` / folder `/ (root)`.)
-
-## Cập nhật nội dung
-
-1. Sửa `index.html` hoặc thêm ảnh vào `images/`
-2. `git add . && git commit -m "Update" && git push`
+- Site: https://dungeon.sugeonarea.com
+- Source build: monorepo `SugeonDungeon/site` (Vite)

@@ -1,0 +1,917 @@
+{
+  "mobs": [
+    {
+      "id": "DungeonDrowned_T1",
+      "display": "Thâm U Thủy Sát",
+      "displayEn": "Abyssal Drowned",
+      "tier": 1,
+      "hp": 150,
+      "damage": 17,
+      "speed": 0.4,
+      "armor": "Giáp sắt full, Bảo Vệ IV, Chống Mũi Tên II, Đinh Ba Đâm III",
+      "modifiers": null,
+      "kb": "10%",
+      "threat": "Cao",
+      "score100": 35,
+      "image": "/assets/mobs/Tham_u_thuy_sat.png",
+      "role": "Tank cận chiến, áp lực sóng nước và đinh ba, hồi máu khi trúng đòn",
+      "skills": [
+        {
+          "name": "Sóng Thủy (TidePulse)",
+          "trigger": "Mỗi ~4 giây",
+          "effect": "30 sát thương, bán kính ~6 block."
+        },
+        {
+          "name": "Kim Mưu Muối (SaltNeedle)",
+          "trigger": "Mỗi ~4 giây",
+          "effect": "Chậm II (6 giây), bán kính ~12 block."
+        },
+        {
+          "name": "Bong Bóng Đinh Ba (TridentBubble)",
+          "trigger": "~onAttack trúng player (CD 8s)",
+          "effect": "35 sát thương; hồi 20 máu."
+        },
+        {
+          "name": "Sóng Thần (SongThan)",
+          "trigger": "Máu < 50% (CD 30s, 1 lần)",
+          "effect": "40 sát thương ~8 block, mù 3 giây, hất tung mạnh."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonStray_T1",
+      "display": "Sương Cốt Du Tiễn",
+      "displayEn": "Frost Stray",
+      "tier": 1,
+      "hp": 150,
+      "damage": 22,
+      "speed": 0.35,
+      "armor": "Không giáp, miễn nhiễm mũi tên hoàn toàn",
+      "modifiers": "PROJECTILE 0 (Miễn tên) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)",
+      "kb": "0%",
+      "threat": "Cao",
+      "score100": 40,
+      "image": "/assets/mobs/Suong_cot_du_tien.png",
+      "role": "Xạ thủ tầm xa, debuff, nổ băng khi chết buff đồng minh",
+      "skills": [
+        {
+          "name": "Màn Sương Băng (FrostVeil)",
+          "trigger": "Mỗi ~4 giây (CD 9s)",
+          "effect": "Yếu đi II (8 giây) + Chậm I (2,5 giây), ~8 block."
+        },
+        {
+          "name": "Mảnh Băng (RimeShard)",
+          "trigger": "Mỗi ~5 giây",
+          "effect": "25 sát thương, ~9 block."
+        },
+        {
+          "name": "Băng Tiễn (BangTien)",
+          "trigger": "Mỗi ~4 giây (CD 8s)",
+          "effect": "35 sát thương; hồi 20 máu."
+        },
+        {
+          "name": "Huyết Tế Băng Giá (HuyetTe)",
+          "trigger": "~onDeath",
+          "effect": "40 sát thương (~16 block), hất tung, choáng 9 giây; hồi 25 máu đồng minh trong 16 block."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonSkeleton_T1",
+      "display": "Bạch Cốt Thành Vệ",
+      "displayEn": "Volt Skeleton",
+      "tier": 1,
+      "hp": 100,
+      "damage": 14,
+      "speed": 0.3,
+      "armor": "Giáp sắt full, Bảo Vệ IV, Chống Mũi Tên II, Kiếm sắt Sắc bén IV",
+      "modifiers": null,
+      "kb": "0%",
+      "threat": "Rất khó",
+      "score100": 52,
+      "image": "/assets/mobs/Bach_cot_thanh_ve.png",
+      "role": "Kiếm sĩ điện — cận chiến + vòng sét + bão điện 30/s",
+      "skills": [
+        {
+          "name": "Nanh Điện (VoltFang)",
+          "trigger": "~onAttack trúng player (CD 8s)",
+          "effect": "35 sát thương + sét; tăng tốc 3 giây."
+        },
+        {
+          "name": "Nhảy Bóng (ShadowBlink)",
+          "trigger": "~onDamaged (CD 10s)",
+          "effect": "30 sát thương, mù 2 giây, đẩy lùi; hồi 20 máu."
+        },
+        {
+          "name": "Thiên Lôi (ThienLoi)",
+          "trigger": "Mỗi ~12,5 giây (CD 20s)",
+          "effect": "6 tia sét: mỗi tia 25 sát thương + cháy 5 giây (~3 block)."
+        },
+        {
+          "name": "Bão Điện Từ (BaoDienTu)",
+          "trigger": "Mỗi ~15 giây (CD 22s)",
+          "effect": "Trong 7 giây, mỗi giây 30 sát thương + Yếu đi I (~6 giây), ~6 block."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonZombie_T1",
+      "display": "Cương Thi Địa Lao",
+      "displayEn": "Dungeon Zombie",
+      "tier": 1,
+      "hp": 120,
+      "damage": 17,
+      "speed": 0.35,
+      "armor": "Giáp sắt full, Bảo Vệ IV, Chống Mũi Tên II, Kiếm sắt Sắc bén IV + Đẩy lùi I",
+      "modifiers": null,
+      "kb": "0%",
+      "threat": "Cao",
+      "score100": 47,
+      "image": "/assets/mobs/Cuong_thi_ia_lao.png",
+      "role": "Tank chậm, debuff vùng Wither II + phản công khi bị đánh 3 lần liên tiếp",
+      "skills": [
+        {
+          "name": "Âm Trường Địa Lao",
+          "trigger": "Mỗi ~9 giây (CD 9s)",
+          "effect": "Đói II (5 giây) + Wither II (6 giây), ~6 block."
+        },
+        {
+          "name": "Tử Khí",
+          "trigger": "Mỗi ~10 giây",
+          "effect": "Mù 2 giây, kéo gần 2 nhịp, 35 sát thương; hồi 20 máu."
+        },
+        {
+          "name": "Điện Loạn",
+          "trigger": "Bị đánh 3 lần liên tiếp (CD 15s)",
+          "effect": "Lao vào: 40 sát thương + hất văng."
+        },
+        {
+          "name": "Vùng Xác Tanh",
+          "trigger": "~onDeath",
+          "effect": "6 nhịp Độc III (4 giây/nhịp), ~6 block."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonCreeper_T1",
+      "display": "Phược Nổ Cuồng Linh",
+      "displayEn": "Bloom Creeper",
+      "tier": 1,
+      "hp": 160,
+      "damage": 12,
+      "speed": 0.44,
+      "armor": "Không giáp, kháng tấn công vật lý rất cao",
+      "modifiers": "PROJECTILE 0 (Miễn đạn) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)",
+      "kb": "0%",
+      "threat": "Rất khó",
+      "score100": 60,
+      "image": "/assets/mobs/Phuot_no_cuong_linh.png",
+      "role": "Bom di động — chạy nhanh, sát thương vùng lớn, triệu hồi 3 mini",
+      "skills": [
+        {
+          "name": "Sóng Hỏa (FireShockwave)",
+          "trigger": "Mỗi ~8 giây (CD 10s)",
+          "effect": "35 sát thương + cháy 5 giây + hất tung, ~10 block."
+        },
+        {
+          "name": "Nổ Phản (CounterBloom)",
+          "trigger": "~onDamaged (CD 6s)",
+          "effect": "30 sát thương + Chậm III (3 giây), ~6 block."
+        },
+        {
+          "name": "Rãi Bơm (RaiBom)",
+          "trigger": "~onDamaged (CD 16s)",
+          "effect": "Triệu hồi 3 Bơm Mini; hồi 25 máu."
+        },
+        {
+          "name": "Thiên Nhiên Trỗi Dậy (NatureBloom)",
+          "trigger": "Mỗi ~10 giây (CD 25s)",
+          "effect": "Vùng ~14 block trong 8 giây: 30 sát thương + choáng 1 giây mỗi ~4 giây."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonCreeperMini_T1",
+          "display": "Bơm Nổ Mini",
+          "displayEn": "Bơm Nổ Mini",
+          "hp": 40,
+          "damage": 12,
+          "speed": 0.44,
+          "role": "Lính phụ do Creeper chính triệu hồi",
+          "skills": [
+            {
+              "name": "Ô Nhiễm Mini",
+              "trigger": "~onDeath",
+              "effect": "30 sát thương + 3 nhịp Độc III (3 giây/nhịp), ~6 block."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonCaveSpider_T1",
+      "display": "Hiệm Tơ Âm Phủ",
+      "displayEn": "Veil Cave Spider",
+      "tier": 1,
+      "hp": 120,
+      "damage": 17,
+      "speed": 0.4,
+      "armor": "Khiên tơ 15 HP hấp thụ, làm mới mỗi ~10 giây",
+      "modifiers": "ENTITY_ATTACK 0.4 (Chỉ nhận 40% dame tay)",
+      "kb": "0%",
+      "threat": "Rất khó",
+      "score100": 48,
+      "image": "/assets/mobs/Hiem_to_am_phu.png",
+      "role": "Assassin nhanh — khống chế, acid, khiên, phân thân khi máu thấp",
+      "skills": [
+        {
+          "name": "Cắn Độc (VenomBite)",
+          "trigger": "~onAttack (CD 10s)",
+          "effect": "Mù 2 giây + choáng 2 giây."
+        },
+        {
+          "name": "Khạt Acid (KhatAcid)",
+          "trigger": "~onAttack (CD 14s)",
+          "effect": "Vùng ~6 block: 35 sát thương, Đói II + Yếu đi II (4 giây)."
+        },
+        {
+          "name": "Khiên Tơ (SilkShield)",
+          "trigger": "~onTimer:200",
+          "effect": "Khiên 15 HP hấp thụ, làm mới mỗi ~10 giây."
+        },
+        {
+          "name": "Phân Thân (PhanThan)",
+          "trigger": "Máu < 60% (CD 60s, 1 lần)",
+          "effect": "Triệu hồi 1 bản sao (80 máu)."
+        },
+        {
+          "name": "Ô Nhiễm Tử Vong",
+          "trigger": "~onDeath",
+          "effect": "35 sát thương + hất tung; hồi 20 máu đồng minh."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonCaveSpider_T1_Anh",
+          "display": "Hiệm Tơ (Bản sao)",
+          "displayEn": "Hiệm Tơ (Bản sao)",
+          "hp": 80,
+          "damage": 12,
+          "speed": 0.4,
+          "role": "Ảo ảnh phân thân — skill mở ngay, không phân thân",
+          "skills": [
+            {
+              "name": "Cắn Độc",
+              "trigger": "~onAttack (CD 10s)",
+              "effect": "Mù 2 giây + choáng 2 giây."
+            },
+            {
+              "name": "Ô Nhiễm Tử Vong",
+              "trigger": "~onDeath",
+              "effect": "35 sát thương + hất tung; hồi 20 máu đồng minh."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonHusk_T1",
+      "display": "Sa Mộ Khô Hồn",
+      "displayEn": "Desert Husk",
+      "tier": 1,
+      "hp": 120,
+      "damage": 16,
+      "speed": 0.3,
+      "armor": "Giáp vàng full, Bảo Vệ IV, Chống Mũi Tên II, Kiếm vàng Sắc bén IV + Hỏa Nguyên I",
+      "modifiers": null,
+      "kb": "0%",
+      "threat": "Cao",
+      "score100": 57,
+      "image": "/assets/mobs/Sa_mo_kho_hon.png",
+      "role": "Pháp sư sa mạc — vùng nóng, cầu lửa, bão cát, cát lún, kỵ lạc 300 HP",
+      "skills": [
+        {
+          "name": "Thiêu Đốt Sa Mạc (DesertAuraTick)",
+          "trigger": "Mỗi ~0,5 giây",
+          "effect": "Cháy player trong ~6 block."
+        },
+        {
+          "name": "Ôm Lửa (FireEmbrace)",
+          "trigger": "~onDamaged (CD 6s)",
+          "effect": "Hồi 20 máu."
+        },
+        {
+          "name": "Cầu Lửa Gió (GaleOrbs)",
+          "trigger": "Mỗi ~6 giây (CD 13s)",
+          "effect": "4 cầu lửa; mỗi viên trúng 30 sát thương + đẩy."
+        },
+        {
+          "name": "Bão Cát (Sandstorm)",
+          "trigger": "Mỗi ~8 giây (CD 17s)",
+          "effect": "3 đợt: mỗi đợt 30 sát thương + buồn nôn II + bay lên 4 giây."
+        },
+        {
+          "name": "Cát Lún (Quicksand)",
+          "trigger": "Mỗi ~8 giây (CD 18s)",
+          "effect": "Vùng ~10 block trong 6 giây: Chậm IV + kéo về tâm mỗi giây."
+        },
+        {
+          "name": "Kỵ Lạc Sa Mạc (CamelCharge)",
+          "trigger": "Máu < 50% (1 lần)",
+          "effect": "Cưỡi lạc đà 300 HP, kháng lửa + tăng tốc vĩnh viễn đến khi xuống."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonHuskCamel_T1",
+          "display": "Kỵ Lạc Sa Mạc (Thú cưỡi)",
+          "displayEn": "Kỵ Lạc Sa Mạc (Thú cưỡi)",
+          "hp": 300,
+          "damage": 3,
+          "speed": 0.42,
+          "role": "Thú cưỡi khổng lồ — đá gạc 30 dmg, hất văng cực mạnh",
+          "skills": [
+            {
+              "name": "Đá Gạc (CamelBuck)",
+              "trigger": "Mỗi ~3 giây",
+              "effect": "30 sát thương + hất văng rất mạnh (velocityY 14)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonShulker_T1",
+      "display": "Giới Hạp Phong Ấn",
+      "displayEn": "Seal Shulker",
+      "tier": 1,
+      "hp": 200,
+      "damage": 23,
+      "speed": 0.01,
+      "armor": "Vỏ hạp phòng vệ tự nhiên, kháng đẩy lùi cực cao",
+      "modifiers": "FIRE 0 · FIRE_TICK 0 (Miễn lửa) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame cận chiến)",
+      "kb": "85%",
+      "threat": "Cực khó",
+      "score100": 51,
+      "image": "/assets/mobs/Gioi_hap_phong_an.png",
+      "role": "Boss turret — đạn 23, barrage 35×10, vùng 40/tick, triệu mini khi trúng",
+      "skills": [
+        {
+          "name": "Triệu Mini (MiniSummonOnHit)",
+          "trigger": "Đạn trúng player (CD 15s)",
+          "effect": "Sinh 1 Ấn Giám Tí Hon (60 máu, đạn 22)."
+        },
+        {
+          "name": "Hoán Đổi (SwapPrison)",
+          "trigger": "~onDamaged (CD 17s)",
+          "effect": "Đổi vị trí + 30 sát thương + Chậm IV (4 giây)."
+        },
+        {
+          "name": "Long Vực Hư Không (DragonVoidPrison)",
+          "trigger": "Mỗi ~8 giây (CD 19s)",
+          "effect": "Vùng ~8 block trong 6 giây: mỗi ~0,75 giây 40 sát thương + nhảy cao + đẩy."
+        },
+        {
+          "name": "Vạn Hạp Truy Kích (VoidBulletBarrage)",
+          "trigger": "Mỗi ~5 giây (CD 13s)",
+          "effect": "10 viên — mỗi viên thêm 35 sát thương skill (+ đạn 23 base)."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonShulkerMini_T1",
+          "display": "Ấn Giám Tí Hon",
+          "displayEn": "Ấn Giám Tí Hon",
+          "hp": 60,
+          "damage": 22,
+          "speed": 0.01,
+          "role": "Lính tháp pháo phụ — nguy hiểm vì số lượng",
+          "skills": [
+            {
+              "name": "Đạn Truy Kích",
+              "trigger": "~onShoot",
+              "effect": "Nã đạn Shulker tầm xa, 22 sát thương mỗi phát trúng."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonWitch_T1",
+      "display": "Cốt Độc Yểm Sư",
+      "displayEn": "Bone Witch",
+      "tier": 1,
+      "hp": 150,
+      "damage": 12,
+      "speed": 0.36,
+      "armor": "Không giáp, ném thuốc ~2× tốc độ",
+      "modifiers": "PROJECTILE 0.12 (Chỉ nhận 12% dame bắn) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)",
+      "kb": "0%",
+      "threat": "Rất khó",
+      "score100": 59,
+      "image": "/assets/mobs/Cot_oc_kiem_su.png",
+      "role": "Pháp sư hỗ trợ — 3 sói + Liên Kết 4 tia sét 30 dmg",
+      "skills": [
+        {
+          "name": "Phản Ánh Bóng Tối (Retreat)",
+          "trigger": "Mỗi ~4,5 giây (CD 9s)",
+          "effect": "Nhảy lùi ~4 block, tăng tốc II (4 giây), hồi 15 máu."
+        },
+        {
+          "name": "Tối Ám Khóa Hồn (DarkBurst)",
+          "trigger": "Mỗi ~5,5 giây (CD 12s)",
+          "effect": "Bóng tối + buồn nôn II + Wither II (4 giây) lên người gần nhất."
+        },
+        {
+          "name": "Bầy Chó Săn (HunterPack)",
+          "trigger": "Mỗi ~7,5 giây (CD 20s)",
+          "effect": "Triệu hồi 3 Sói Độc gần người chơi."
+        },
+        {
+          "name": "Liên Kết Đau Đớn (PainLink)",
+          "trigger": "Mỗi ~3 giây (CD 15s)",
+          "effect": "Sợi dây 8 giây + 4 tia sét, mỗi tia 30 sát thương (tối đa ~120 skill)."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonWitchWolf_T1",
+          "display": "Sói Độc Dẫn Đường",
+          "displayEn": "Sói Độc Dẫn Đường",
+          "hp": 110,
+          "damage": 22,
+          "speed": 0.42,
+          "role": "Sói săn mồi — Speed I + Strength II vĩnh viễn, KB 100%",
+          "skills": [
+            {
+              "name": "Bản Năng Khát Máu",
+              "trigger": "~onSpawn",
+              "effect": "Tăng tốc I + Sức mạnh II vĩnh viễn đến khi chết."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonMagmaCube_T1",
+      "display": "Nham Ma Nguyên Hỏa",
+      "displayEn": "Primordial Magma Cube",
+      "tier": 1,
+      "hp": 250,
+      "damage": 50,
+      "speed": 2.5,
+      "armor": "Size 6, kháng cận chiến cao, KB 60%",
+      "modifiers": "ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)",
+      "kb": "60%",
+      "threat": "Cực khó",
+      "score100": 66,
+      "image": "/assets/mobs/Nham_ma_nguyen_hoa.png",
+      "role": "Boss di động — cực nhanh, nuốt, keo lava, phản đòn; chết tách slime",
+      "skills": [
+        {
+          "name": "Phản Đòn Dung Nham (HeatRecoil)",
+          "trigger": "~onDamaged (CD 9s)",
+          "effect": "35 sát thương + cháy 5 giây + hất tung."
+        },
+        {
+          "name": "Nuốt Chửng (Engulf)",
+          "trigger": "Mỗi ~6 giây (CD 23s)",
+          "effect": "5 giây: kéo mạnh + Chậm IV + 30 sát thương mỗi 0,25 giây + mù/buồn nôn."
+        },
+        {
+          "name": "Keo Hỏa Ngục (MoltenWeb)",
+          "trigger": "Mỗi ~6 giây (CD 15s)",
+          "effect": "Sóng keo ~8 block: 40 sát thương + Chậm IV + Mệt đào II + cháy."
+        },
+        {
+          "name": "Chế Giễu (DevourTaunt)",
+          "trigger": "~onPlayerKill (CD 30s)",
+          "effect": "Hồi 50 máu khi giết người chơi."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonPiglin_T2",
+      "display": "Liệt Trư Kim Giáp",
+      "displayEn": "Gilded Piglin",
+      "tier": 2,
+      "hp": 200,
+      "damage": 25,
+      "speed": 0.32,
+      "armor": "Netherite Full · Bảo Vệ IV + Gai II · Kiếm vàng Sắc bén IV + Hỏa nguyên II",
+      "modifiers": null,
+      "kb": "20%",
+      "threat": "Rất khó",
+      "score100": 61,
+      "image": "/assets/mobs/Liet_tru_kim_giap.png",
+      "role": "Chiến binh cận–xa lửa — Cuồng Nộ Str+Speed vĩnh viễn (~onTimer:15)",
+      "skills": [
+        {
+          "name": "Vàng Bùng Phát (GoldSurge)",
+          "trigger": "~onTimer:120 · CD 12s",
+          "effect": "40 sát thương + Chậm I (4 giây), r≈5."
+        },
+        {
+          "name": "Vòng Lửa (FireRing)",
+          "trigger": "~onTimer:100 · CD 16s (địch ≤8 block)",
+          "effect": "40 sát thương + cháy 4 giây, r≈8."
+        },
+        {
+          "name": "Pháo Kích (PhaoKich)",
+          "trigger": "~onTimer:160 · CD 13s",
+          "effect": "4 cầu lửa — mỗi cầu trúng 50 sát thương + Yếu I."
+        },
+        {
+          "name": "Lửa Thiên (LuaThien)",
+          "trigger": "~onTimer:200 · CD 17s",
+          "effect": "30 sát thương xuyên giáp + mù + Chậm III + hất tung."
+        },
+        {
+          "name": "Tia Hồn Lửa (TiaHonLua)",
+          "trigger": "~onTimer:180 · CD 25s",
+          "effect": "Sóng 70 + 4 nổ chân player (20 xuyên giáp mỗi nổ)."
+        },
+        {
+          "name": "Cuồng Nộ (RageTick)",
+          "trigger": "~onTimer:15",
+          "effect": "Sức mạnh I + Tăng tốc I vĩnh viễn đến khi chết."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonPillager_T2",
+      "display": "Thập Tự Hỏa Tố",
+      "displayEn": "Crossfire Pillager",
+      "tier": 2,
+      "hp": 200,
+      "damage": 100,
+      "speed": 0.35,
+      "armor": "Nỏ Quick Charge VI, Piercing IV — không giáp item",
+      "modifiers": "PROJECTILE 0 (Miễn đạn) · ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)",
+      "kb": "0%",
+      "threat": "Cực khó",
+      "score100": 69,
+      "image": "/assets/mobs/Thap_tu_hoa_to.png",
+      "role": "Tay nỏ elite — Hỏa Kích 80, Cuồng Phong 70, viện binh khi hấp hối",
+      "skills": [
+        {
+          "name": "Phun Tên (PhunTen)",
+          "trigger": "~onShoot · CD 5s",
+          "effect": "Hồi 8 máu + thêm 50 sát thương lên mục tiêu."
+        },
+        {
+          "name": "Giáp Nỏ (GiapNo)",
+          "trigger": "~onDamaged · CD 10s",
+          "effect": "Khiên 30 HP (~25 giây)."
+        },
+        {
+          "name": "Hỏa Kích (HoaKich)",
+          "trigger": "~onShoot · CD 13s",
+          "effect": "80 sát thương + cháy ~10 giây + sóng lửa lan."
+        },
+        {
+          "name": "Cuồng Phong (CuongPhong)",
+          "trigger": "~onDamaged · CD 25s",
+          "effect": "70 sát thương r≈12, hất văng cực mạnh, rơi chậm 15 giây."
+        },
+        {
+          "name": "Viện Binh (VienBinh)",
+          "trigger": "Máu < 40% · CD 180s",
+          "effect": "Chậm II r≈25 + triệu 3 Kẻ Biện Hộ."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonVindicator_BienHo",
+          "display": "Kẻ Biện Hộ",
+          "displayEn": "Kẻ Biện Hộ",
+          "hp": 100,
+          "damage": 20,
+          "speed": 0.4,
+          "role": "Quân bảo vệ tiên phong — triệu bởi Viện Binh",
+          "skills": [
+            {
+              "name": "Đột Kích Tay",
+              "trigger": "Cận chiến",
+              "effect": "Rìu sắt 20 dmg, nhận 40% đánh tay."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonZPiglin_T2",
+      "display": "Ma Trư Liệt Huyết",
+      "displayEn": "Blooded Zombified Piglin",
+      "tier": 2,
+      "hp": 200,
+      "damage": 25,
+      "speed": 0.35,
+      "armor": "Netherite Full · Bảo Vệ IV + Gai II · Rìu vàng Sắc bén IV + Smite III",
+      "modifiers": null,
+      "kb": "70%",
+      "threat": "Rất khó",
+      "score100": 65,
+      "image": "/assets/mobs/Ma_tru_liet_huyet.png",
+      "role": "Phản công — 2 đòn liên tiếp kích phản đòn, mưa vàng 55, nổ chết",
+      "skills": [
+        {
+          "name": "Cắn Khô (DryBite)",
+          "trigger": "~onAttack · CD 10s",
+          "effect": "Wither I + Đói I (5 giây)."
+        },
+        {
+          "name": "Vỏ Lửa Phản Trảm (FlameShellExecute)",
+          "trigger": "Bị đánh 2 lần liên tiếp · CD 22s",
+          "effect": "70 sát thương r≈12 + hất văng; quái Speed I (4 giây)."
+        },
+        {
+          "name": "Mưa Vàng (MuaVang)",
+          "trigger": "~onTimer:160 · CD 16s",
+          "effect": "5 đợt, mỗi đợt 55 sát thương + Chậm II (4 giây)."
+        },
+        {
+          "name": "Chảm Kích (ChamKich)",
+          "trigger": "~onAttack · CD 20s",
+          "effect": "Đáp đất: 90 sát thương r≈10 + buồn nôn II + cháy."
+        },
+        {
+          "name": "Bộc Phá Vàng (BocPha)",
+          "trigger": "~onDeath",
+          "effect": "60 sát thương xuyên giáp r≈6 + mù + hất tung."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonMooshroom_T2",
+      "display": "Ám Diệp Huyết Mầm",
+      "displayEn": "Bloodspore Mooshroom",
+      "tier": 2,
+      "hp": 220,
+      "damage": 35,
+      "speed": 0.31,
+      "armor": "Không giáp, miễn mũi tên, KB 100%",
+      "modifiers": "PROJECTILE 0 (Miễn đạn) · ENTITY_ATTACK 0.25 (Chỉ nhận 25% dame tay)",
+      "kb": "100%",
+      "threat": "Cực khó",
+      "score100": 94,
+      "image": "/assets/mobs/Am_diep_huyet_mam.png",
+      "role": "Kiểm soát vùng — triệu mini, khiên 40 HP, bùng phát 3 sóng 70/60/50",
+      "skills": [
+        {
+          "name": "Nổ Bào Tử (OnDamagedSporeburst)",
+          "trigger": "~onDamaged · CD 12s",
+          "effect": "r≈8: buồn nôn + độc (4 giây); hồi 10 máu."
+        },
+        {
+          "name": "Khiên + Tăng tốc (ShieldSurge)",
+          "trigger": "~onTimer:100 · CD 15s",
+          "effect": "Khiên 40 HP + Speed II (3 giây)."
+        },
+        {
+          "name": "Bào Tử Lan Rộng (MyceliumSlow)",
+          "trigger": "~onTimer:120 · CD 10s",
+          "effect": "r≈20: Chậm II (6 giây) toàn bộ người chơi."
+        },
+        {
+          "name": "Đại Dịch (DaiDich)",
+          "trigger": "~onTimer:120 · CD 90s",
+          "effect": "Triệu 3 Bò Nấm Mini; bản thân lùi kite."
+        },
+        {
+          "name": "Lốc Bào Tử (LocBaoTu)",
+          "trigger": "~onTimer:160 · CD 20s (máu < 60%)",
+          "effect": "r≈7 trong 7 giây: mỗi giây 20 sát thương xuyên giáp + Yếu I."
+        },
+        {
+          "name": "Bùng Phát (BungPhat)",
+          "trigger": "~onTimer:200 · CD 30s",
+          "effect": "3 sóng: 70 / 60 / 50 dmg; combo 3 sóng → bay + choáng."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonMooshroomMini_T2",
+          "display": "Bò Nấm Mini",
+          "displayEn": "Bò Nấm Mini",
+          "hp": 100,
+          "damage": 30,
+          "speed": 0.34,
+          "role": "Lực lượng tự sát — nổ chết 70 dmg",
+          "skills": [
+            {
+              "name": "Tự Sát Tiễn Biệt",
+              "trigger": "~onDeath",
+              "effect": "Nổ r≈5: 70 sát thương + Wither I (4 giây)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonWarden_T2",
+      "display": "U Minh Giám Quân",
+      "displayEn": "Umbral Warden",
+      "tier": 2,
+      "hp": 200,
+      "damage": 30,
+      "speed": 0.32,
+      "armor": "Không giáp vật lý, KB 100%",
+      "modifiers": "ENTITY_ATTACK 0.3 (Chỉ nhận 30% dame tay)",
+      "kb": "100%",
+      "threat": "Cực khó",
+      "score100": 77,
+      "image": "/assets/mobs/U_minh_giam_quan.png",
+      "role": "Boss zone — hút máu 4/đòn, sao 55/s, nổ hư không",
+      "skills": [
+        {
+          "name": "Huyết Dưỡng Hắc (Lifesteal)",
+          "trigger": "~onAttack trúng player",
+          "effect": "Hồi 4 máu mỗi đòn tay."
+        },
+        {
+          "name": "Hắc Địa Chấn (DarkShockwave)",
+          "trigger": "~onDamaged · CD 12s",
+          "effect": "r≈6: 50 sát thương + hất văng + mù 3 giây + choáng ~2 giây."
+        },
+        {
+          "name": "Sao Tinh Thể (SaoTinhThe)",
+          "trigger": "~onTimer:180 · CD 18s",
+          "effect": "Vùng r≈8 quanh từng player 6 giây: mỗi giây 55 sát thương + Yếu I."
+        },
+        {
+          "name": "Hư Không (HuKhong)",
+          "trigger": "~onTimer:220 · CD 23s",
+          "effect": "Hất r≈18, rồi ~6 giây nổ ngẫu nhiên: mỗi điểm 10 sát thương xuyên giáp."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonSkeleton_T2",
+      "display": "Băng Lam Kỵ Cốt",
+      "displayEn": "Frostbound Skeleton",
+      "tier": 2,
+      "hp": 160,
+      "damage": 30,
+      "speed": 0.32,
+      "armor": "Diamond Full · Bảo Vệ IV (mũ III) + Gai II · Cung Power V + Flame + Punch II",
+      "modifiers": null,
+      "kb": "0%",
+      "threat": "Rất khó",
+      "score100": 54,
+      "image": "/assets/mobs/Bang_lam_cot.png",
+      "role": "Hỏa lực băng tuyết — mưa tên dày, hỏa tiễn 40 xuyên giáp, phân thân theo pha",
+      "skills": [
+        {
+          "name": "Ba Mũi Bồi (TripleArrow)",
+          "trigger": "~onAttack · CD 10s",
+          "effect": "3 mũi tên skill (60 / 30 / 60 dmg) + Yếu I."
+        },
+        {
+          "name": "Khiên Xương (BoneShield)",
+          "trigger": "~onDamaged · CD 20s",
+          "effect": "Khiên 10 HP + Levitation III (2 giây) + rơi chậm."
+        },
+        {
+          "name": "Phân Thân Theo Pha (PhaseSummon)",
+          "trigger": "Ngưỡng máu · CD 60s",
+          "effect": "Triệu 1 Cốt Kỵ Đột Kích (tối đa nhiều lần)."
+        },
+        {
+          "name": "Mưa Tên Băng Lam (MuaTen)",
+          "trigger": "~onAttack · CD 20s",
+          "effect": "~4 giây volley dày — mũi tên skill 30–40 + Chậm II."
+        },
+        {
+          "name": "Hỏa Tiễn (HoaTien)",
+          "trigger": "~onDamaged · CD 15s",
+          "effect": "Cột lửa r≈6: 40 sát thương xuyên giáp + cháy 7,5 giây."
+        }
+      ],
+      "minions": [
+        {
+          "id": "DungeonSkeletonMini_T2",
+          "display": "Cốt Kỵ Đột Kích",
+          "displayEn": "Cốt Kỵ Đột Kích",
+          "hp": 100,
+          "damage": 25,
+          "speed": 0.48,
+          "role": "Kỵ binh siêu tốc — Speed II spawn, hất văng 1 lần (CD 60s)",
+          "skills": [
+            {
+              "name": "Đột Kích Hất Tung",
+              "trigger": "~onAttack (CD 60s)",
+              "effect": "Hất văng cực mạnh (velocityY 15)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "DungeonWitherSkeleton_T2",
+      "display": "Hủy Diệt Hắc Cốt",
+      "displayEn": "Ruin Wither Skeleton",
+      "tier": 2,
+      "hp": 200,
+      "damage": 25,
+      "speed": 0.35,
+      "armor": "Netherite Full · Bảo Vệ IV + Gai II · Rìu Netherite Sắc bén V",
+      "modifiers": null,
+      "kb": "50%",
+      "threat": "Rất khó",
+      "score100": 77,
+      "image": "/assets/mobs/Huy_diet_hac_cot.png",
+      "role": "Assassin — hoán đổi, 10 skull barrage, hắc cầu 80 xuyên giáp",
+      "skills": [
+        {
+          "name": "Vùng Neo (AnchorZone)",
+          "trigger": "~onTimer:130 · CD 12s",
+          "effect": "r≈8: không nhảy + Chậm IV (2 giây)."
+        },
+        {
+          "name": "Xích Đen (ChainSwap)",
+          "trigger": "~onTimer:150 · CD 12s",
+          "effect": "Đổi chỗ + 25 sát thương xuyên giáp + mù 3 giây; hồi 20 máu."
+        },
+        {
+          "name": "Nổ Cận Chiến (MeleeBurst)",
+          "trigger": "~onAttack · CD 20s",
+          "effect": "60 sát thương + hất tung; quái Speed I (4 giây)."
+        },
+        {
+          "name": "Đầu Lâu Nguyền Rủa (SkullBarrage)",
+          "trigger": "~onTimer:170 · CD 22s",
+          "effect": "Bắn 10 đầu lâu wither (né được)."
+        },
+        {
+          "name": "Hắc Cầu Hủy Diệt (HacCau)",
+          "trigger": "~onTimer:210 · CD 25s",
+          "effect": "Gồng 4 giây rồi đập: 80 sát thương xuyên giáp + hất + rơi chậm."
+        },
+        {
+          "name": "Bụi Tử Vong (DeathDust)",
+          "trigger": "~onDeath",
+          "effect": "r≈14 trong ~6 giây: Chậm III + Wither + 20 dmg/nhịp."
+        }
+      ],
+      "minions": []
+    },
+    {
+      "id": "DungeonBlaze_T2",
+      "display": "Ác Quỷ Lửa",
+      "displayEn": "Infernal Blaze",
+      "tier": 2,
+      "hp": 200,
+      "damage": 25,
+      "speed": 0.3,
+      "armor": "Miễn lửa + cháy, kháng đánh tay và đạn cao",
+      "modifiers": "ENTITY_ATTACK 0.2 (20% dame tay) · PROJECTILE 0.2 (20% dame bắn) · FIRE 0 · FIRE_TICK 0",
+      "kb": "60%",
+      "threat": "Cực khó",
+      "score100": 66,
+      "image": "/assets/mobs/Ac_quy_lua.png",
+      "role": "Pháp sư dung nham — phun lửa homing, thiên thạch 70, cột lava 50",
+      "skills": [
+        {
+          "name": "Áo Lửa Phản Kích (BurnAura)",
+          "trigger": "~onDamaged",
+          "effect": "Mọi người r≈5 cháy 5 giây."
+        },
+        {
+          "name": "Trứng Lửa (EggFireRing)",
+          "trigger": "~onTimer:120 · CD 13s",
+          "effect": "Kén lửa 4 giây — đánh vào: 50 sát thương + hất + Chậm III + cháy."
+        },
+        {
+          "name": "Phun Lửa (PhunLua)",
+          "trigger": "~onTimer:120 · CD 20s",
+          "effect": "Homing missile 4 giây: mỗi tia 12 sát thương xuyên giáp + cháy."
+        },
+        {
+          "name": "Thiên Thạch (ThienThach)",
+          "trigger": "~onTimer:160 · CD 25s",
+          "effect": "70 sát thương + mù 2 giây + Yếu II (5 giây) + hất văng mạnh."
+        },
+        {
+          "name": "Cột Dung Nham (CotLava)",
+          "trigger": "~onTimer:240 · CD 20s",
+          "effect": "3 cột lava (cách 3 giây): mỗi cột 50 sát thương + cháy 3 giây, r≈2 block."
+        }
+      ],
+      "minions": []
+    }
+  ],
+  "count": 18,
+  "meta": {
+    "source": "curated index.html",
+    "updated": "2026-06-22"
+  }
+}
