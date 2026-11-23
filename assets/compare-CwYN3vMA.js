@@ -1,4 +1,4 @@
-import{_ as e,a as t,f as n,g as r,h as i,n as a,r as o,y as s}from"./ui-CtIhHYz-.js";import{c,t as l}from"./mobs-BNetkzML.js";document.querySelector(`#app`).innerHTML=`
+import{_ as e,a as t,f as n,g as r,h as i,n as a,r as o,y as s}from"./ui-DnTEYaV6.js";import{c,t as l}from"./mobs-D_R3keVO.js";document.querySelector(`#app`).innerHTML=`
   ${a(`compare`)}
   <main class="relative mx-auto max-w-6xl px-5 pb-24 pt-6">
     <header class="bestiary-hero">

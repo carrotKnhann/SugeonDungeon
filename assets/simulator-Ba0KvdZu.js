@@ -1,4 +1,4 @@
-import{_ as e,a as t,f as n,g as r,h as i,i as a,n as o,r as s,v as c,y as l}from"./ui-CtIhHYz-.js";import{a as u,c as d,f,i as p,o as m,p as h,t as g}from"./mobs-BNetkzML.js";var _=new URLSearchParams(location.search).get(`add`);document.querySelector(`#app`).innerHTML=`
+import{_ as e,a as t,f as n,g as r,h as i,i as a,n as o,r as s,v as c,y as l}from"./ui-DnTEYaV6.js";import{a as u,c as d,f,i as p,o as m,p as h,t as g}from"./mobs-D_R3keVO.js";var _=new URLSearchParams(location.search).get(`add`);document.querySelector(`#app`).innerHTML=`
   ${o(`sim`)}
   <main class="relative mx-auto max-w-6xl px-5 pb-24 pt-6">
     <header class="bestiary-hero">

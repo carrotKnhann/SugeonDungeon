@@ -1,4 +1,4 @@
-import{_ as e,a as t,f as n,g as r,h as i,i as a,m as o,n as s,o as c,r as l,s as u,v as d,y as f}from"./ui-CtIhHYz-.js";import{c as p,i as m,n as h,r as g,t as _}from"./mobs-BNetkzML.js";document.querySelector(`#app`).innerHTML=`
+import{_ as e,a as t,f as n,g as r,h as i,i as a,m as o,n as s,o as c,r as l,s as u,v as d,y as f}from"./ui-DnTEYaV6.js";import{c as p,i as m,n as h,r as g,t as _}from"./mobs-D_R3keVO.js";document.querySelector(`#app`).innerHTML=`
   ${s(`list`)}
   <main class="relative mx-auto max-w-6xl px-5 pb-24 pt-4">
     <header class="bestiary-hero">
@@ -56,18 +56,16 @@ import{_ as e,a as t,f as n,g as r,h as i,i as a,m as o,n as s,o as c,r as l,s a
             </div>
           </div>
         </a>`:`<a href="${n}" class="mob-card bestiary-card" style="--r:${o}">
-        <div class="bestiary-card-inner">
-          <div class="bestiary-card-art-wrap">
-            <span class="bestiary-badge bestiary-badge-float" style="background:var(--r)">${e(t.threat)}</span>
-            <div class="bestiary-card-art art-frame">${a(t.image,r,`anim-float`)}</div>
-          </div>
-          <div class="bestiary-card-foot">
-            <h2 class="bestiary-name truncate">${r}</h2>
-            <div class="bestiary-tags">
-              <span>T${t.tier}</span>
-              <span>·</span>
-              <span class="truncate">${t.role||``}</span>
-            </div>
+        <div class="bestiary-card-art-wrap">
+          <span class="bestiary-badge bestiary-badge-float" style="background:var(--r)">${e(t.threat)}</span>
+          <div class="bestiary-card-art art-frame">${a(t.image,r,`anim-float`)}</div>
+        </div>
+        <div class="bestiary-card-foot">
+          <h2 class="bestiary-name truncate">${r}</h2>
+          <div class="bestiary-tags">
+            <span>T${t.tier}</span>
+            <span>·</span>
+            <span class="truncate">${t.role||``}</span>
           </div>
         </div>
       </a>`}).join(``),c()):n.innerHTML=`<div class="bestiary-empty" data-i18n="bestiary.empty">${r(`bestiary.empty`)}</div>`}document.getElementById(`tierRow`).addEventListener(`click`,e=>{let t=e.target.closest(`[data-tier]`);t&&(y=t.dataset.tier||``,T(),D())}),document.getElementById(`threatRow`).addEventListener(`click`,t=>{let n=t.target.closest(`[data-threat]`);n&&(b=n.dataset.threat||``,T(),D(),u(b?e(b):r(`bestiary.all`)))}),document.getElementById(`q`).addEventListener(`input`,()=>{clearTimeout(window.__q),window.__q=setTimeout(D,120)}),document.getElementById(`btnGrid`).addEventListener(`click`,()=>{x=`grid`,T(),D(),d.click()}),document.getElementById(`btnList`).addEventListener(`click`,()=>{x=`list`,T(),D(),d.click()}),window.addEventListener(`sugeon:lang`,()=>{n(document),w(),D()}),T(),D();

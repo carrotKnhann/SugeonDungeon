@@ -1,4 +1,4 @@
-import{a as e,c as t,d as n,f as r,g as i,l as a,n as o,p as s,r as c,y as l}from"./ui-CtIhHYz-.js";function u(e){return`<li data-i18n="${e}">${i(e)}</li>`}function d(){document.querySelector(`#app`).innerHTML=`
+import{a as e,c as t,d as n,f as r,g as i,l as a,n as o,p as s,r as c,y as l}from"./ui-DnTEYaV6.js";function u(e){return`<li data-i18n="${e}">${i(e)}</li>`}function d(){document.querySelector(`#app`).innerHTML=`
   ${o(`guide`)}
   <main class="relative mx-auto max-w-6xl px-5 pb-24 pt-6">
     <header class="guide-hero">

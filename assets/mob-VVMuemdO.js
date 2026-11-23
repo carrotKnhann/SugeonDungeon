@@ -1,4 +1,4 @@
-import{_ as e,a as t,f as n,g as r,h as i,i as a,n as o,r as s,s as c,t as l,u,v as d,y as f}from"./ui-CtIhHYz-.js";import{c as p,d as m,l as h,r as g,s as _,t as v,u as y}from"./mobs-BNetkzML.js";var b=new URLSearchParams(location.search).get(`id`);function x(){return u()===`dark`?`/assets/brand/mark-dark.png`:`/assets/brand/mark-light.png`}document.querySelector(`#app`).innerHTML=`
+import{_ as e,a as t,f as n,g as r,h as i,i as a,n as o,r as s,s as c,t as l,u,v as d,y as f}from"./ui-DnTEYaV6.js";import{c as p,d as m,l as h,r as g,s as _,t as v,u as y}from"./mobs-D_R3keVO.js";var b=new URLSearchParams(location.search).get(`id`);function x(){return u()===`dark`?`/assets/brand/mark-dark.png`:`/assets/brand/mark-light.png`}document.querySelector(`#app`).innerHTML=`
   ${o(`list`)}
   <main id="sheet" class="relative min-h-[calc(100vh-72px)]">
     <div class="relative flex min-h-[40vh] items-center justify-center text-muted" data-i18n="mob.loading">${r(`mob.loading`)}</div>
